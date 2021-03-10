@@ -1,0 +1,48 @@
+@import '@/assets/styles/mixins.scss';
+
+.container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  position: relative;
+  font-family: 'Roboto', sans-serif;
+  
+  &__pending {
+    background: #FFECF4;
+    .title {
+      background: #b5004a96;
+    }
+    &:hover .title {
+	  background-color: #B5004A;
+	}
+  }
+
+  &__approved {
+    background: #F3F5FF;
+    .title {
+      background: #007bff70;
+    }
+    &:hover .title {
+	  background-color: #007bff;
+	}
+  }
+
+  &__executed {
+    background: #F3F3F3;
+    .title {
+      background: #6a7a8482;
+    }
+    &:hover .title {
+	  background-color: #6a7a84;
+	}
+  }
+}
+
+.status {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+  width: 8px;
+  z-index: 1;
+}

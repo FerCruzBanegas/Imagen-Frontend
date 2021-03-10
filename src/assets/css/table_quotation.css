@@ -1,0 +1,45 @@
+.form-control-sm {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.btn-add {
+  height: 2.5em;
+}
+
+.bg-content {
+  background-color: #fdfdfd;
+}
+
+fieldset {
+  background-color: #e9e4e6;
+  border-radius: 4px;
+}
+
+legend {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #000;
+  font-size: 17px;
+  font-weight: bold;
+  padding: 3px 5px 3px 7px;
+  width: auto;
+}
+
+.fieldset {
+	border: 3px groove threedface;
+	margin: 2px;
+	margin-top: 10px;
+	position: relative;
+	padding: 15px 12px 10px;
+}
+.fieldset .legend {
+  position: absolute;
+  top: -11px;
+  left: 11px;
+  background: white;
+  padding-left: 2px;
+  padding-right: 2px;
+}

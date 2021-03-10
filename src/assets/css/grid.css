@@ -1,0 +1,83 @@
+/* >>> .k-item .k-state-selected .k-state-focused {
+  background-color: #9e0207;
+} */
+
+>>> .k-checkbox:checked {
+    border-color: #9e0207;
+    color: #fff;
+    background-color: #9e0207;
+}
+
+>>> .k-pager-numbers .k-state-selected {
+    color: #fff;
+    background-color: #9e0207;
+}
+
+>>> .k-pager-numbers .k-link {
+    color: #9e0207;
+}
+
+>>> .k-pager-nav:hover {
+    color: #9e0207;
+    background-color: #ededed;
+}
+
+>>> .k-menu:not(.k-context-menu) {
+  width: 170px;
+}
+
+>>> .k-menu:not(.k-context-menu) > .k-item {
+  width: 170px;
+  color: #9e0207;
+  font-weight: bold;
+}
+
+>>> .k-menu:not(.k-context-menu) > .k-item:hover, .k-menu:not(.k-context-menu) > .k-item.k-state-hover {
+  color: #bc0208;
+  font-weight: bold;
+}
+
+>>> .k-menu-expand-arrow {
+  margin-left: 60px;
+}
+
+>>> .k-popup .k-item {
+  width: 168px;
+  padding: 5px;
+}
+
+.k-grid {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+/*>>> .k-grid a:hover {
+  text-decoration: underline;
+}*/
+
+>>> .k-grouping-header {
+  color: #767676;
+  background-color: #e8e8e8;
+}
+
+>>> .k-grouping-header .k-group-indicator {
+  border-color: #979797;
+} 
+
+>>> .k-grid-header {
+  background-color: #f9f9f9;
+}
+
+>>> .k-grid-header .k-grid-header-wrap th.k-header {
+  text-align: center;
+}
+
+>>> .k-grid tbody tr {
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+>>> .k-grid tbody td {
+  padding: 0.5em;
+}

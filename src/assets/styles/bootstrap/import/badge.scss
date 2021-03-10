@@ -1,0 +1,65 @@
+@import 'assets/styles/mixins';
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/* BADGE */
+.badge {
+  font-weight: normal;
+  background: $white;
+  color: $secondary;
+  letter-spacing: 1px;
+  font-size: 1em;
+  text-transform: uppercase;
+
+  &.badge-default {
+    background: $default;
+    color: $white;
+  }
+  &.badge-primary {
+    background: #005cbf;
+    color: $white;
+  }
+  &.badge-secondary {
+    background: $secondary;
+    color: $white;
+  }
+  &.badge-success {
+    background: $success;
+    color: $white;
+  }
+  &.badge-danger {
+    background: $danger;
+    color: $white;
+  }
+  &.badge-warning {
+    background: #ff2121;
+    color: $white;
+  }
+  &.badge-info {
+    background: $info;
+    color: $white;
+  }
+  &.badge-light {
+    background: $light;
+    color: $text;
+  }
+  &.badge-dark {
+    background: $dark;
+    color: $white;
+  }
+  &.badge-purple-2 {
+    background: $purple-2;
+    color: $white;
+  }
+  &.badge-custom-1 {
+    background: $custom-1;
+    color: $white;
+  }
+  &.badge-custom-2 {
+    background: $custom-2;
+    color: $white;
+  }
+  &.badge-custom-3 {
+    background: $custom-3;
+    color: $white;
+  }
+}
