@@ -7,8 +7,10 @@
       :access="'invoices'"
       @hide="visibleModal = !visibleModal"
     ></modal-grid>
-    <modal-invoice  v-if="checkInvoice" :invoice="checkInvoice" :visible="visibleInvoice" @hide="closeModalInvoice">
+    <modal-invoice v-if="checkInvoice" :invoice="checkInvoice" :visible="visibleInvoice" @hide="closeModalInvoice">
     </modal-invoice>
+    <modal-edit-invoice v-if="editInvoice" :invoice="editInvoice" :visible="visibleEdit" @hide="closeModalEditInvoice">
+    </modal-edit-invoice>
     <modal-question
       :title="'Alerta'"
       :visible="visibleQuestion"
@@ -82,7 +84,7 @@
             <kendo-grid-column
               :field="'number'"
               :title="'NÚMERO'"
-              :width="130"
+              :width="150"
               :template="templateNumber"
               :filterable-cell-operator="'contains'"
               :filterable-cell-suggestion-operator="'contains'"
@@ -91,13 +93,13 @@
               :filterable="false"
               :field="'date'"
               :title="'FECHA'"
-              :width="150"
+              :width="100"
               :format="'{0:dd/MM/yyyy}'"
             ></kendo-grid-column>
             <kendo-grid-column
               :field="'state'"
               :title="'ESTADO'"
-              :width="170"
+              :width="150"
               :template="templateState"
               :filterable-cell-show-operators="false"
               :filterable-cell-template="stateFilter"
@@ -111,8 +113,12 @@
               :filterable-cell-template="customerFilter"
             ></kendo-grid-column>
             <kendo-grid-column
-              :command="[{className: 'k-grid-anuled', name: ' ', iconClass: 'fa fa-ban', click: openModalDelete}]" 
-              :width="45"
+              :command="[{className: 'k-grid-edit', name: 'edit', text: '', iconClass: 'fa fa-edit', click: openModalEdit}]" 
+              :width="55"
+            ></kendo-grid-column>
+            <kendo-grid-column
+              :command="[{className: 'k-grid-anuled', name: 'anuled', text: '', iconClass: 'fa fa-ban', click: openModalDelete}]" 
+              :width="55"
             ></kendo-grid-column>
           </kendo-grid>
         </div>
@@ -129,6 +135,7 @@ import { API_URL } from "../../services/config"
 import InvoiceService from "../../services/invoice.service"
 import ModalGrid from "../widgets/Modals/ModalGridInvoice.vue"
 import ModalInvoice from "../widgets/Modals/ModalInvoice.vue"
+import ModalEditInvoice from "../widgets/Modals/ModalEditInvoice.vue"
 import ModalQuestion from "../widgets/Modals/ModalQuestion.vue"
 
 export default {
@@ -172,8 +179,10 @@ export default {
       visibleModal: false,
       visibleInvoice: false,
       visibleQuestion: false,
+      visibleEdit: false,
       loadingAlert: false,
       checkInvoice: null,
+      editInvoice: null,
     }
   },
 
@@ -184,6 +193,7 @@ export default {
   components: {
     "modal-grid": ModalGrid,
     "modal-invoice": ModalInvoice,
+    "modal-edit-invoice": ModalEditInvoice,
     "modal-question": ModalQuestion,
   },
 
@@ -263,6 +273,11 @@ export default {
       this.$refs.grid.kendoWidget().dataSource.filter({})
     },
 
+    openModalEdit(ev) {
+      ev.preventDefault()
+      // this.visibleEdit = true
+    },
+
     openModalDelete(ev) {
       ev.preventDefault()
       this.visibleQuestion = true
@@ -292,6 +307,11 @@ export default {
     closeModalInvoice() {
       this.visibleInvoice = false
       this.checkInvoice = null
+    },
+
+    closeModalEditInvoice() {
+      this.$refs.grid.kendoWidget().dataSource.read()
+      this.visibleEdit = false
     },
 
     templateNumber(dataItem) {
@@ -468,6 +488,14 @@ export default {
       })
 
       grid.element.on("click", "tbody tr[data-uid] td:nth-child(7)", function(e) {
+        let element = e.target || e.srcElement
+        let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
+        vm.editInvoice = obj
+        // console.log(obj)
+        vm.visibleEdit = true
+      })
+
+      grid.element.on("click", "tbody tr[data-uid] td:nth-child(8)", function(e) {
         let element = e.target || e.srcElement
         let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
         vm.invoiceId = obj.id

@@ -247,7 +247,7 @@
                       <td style="color: #000000; font-size: 16px; font-weight: bold;">
                         <p style="margin-bottom: 0; ">&nbsp;</p>
                         <span>{{ total(product) | currency }}</span>
-                        <b-button pill class="float-right mr-4" @click="removeItem(index)" size="sm" variant="dark"><i class="fa fa-close"></i></b-button>
+                        <b-button pill class="ml-2 btn-close" @click="removeItem(index)" size="sm" variant="dark"><i class="fa fa-close"></i></b-button>
                       </td>
                     </tr>
                     <tr>
@@ -546,10 +546,7 @@
                       <td style="color: #000000; font-size: 15px;">
                         <p style="margin-bottom: 0;">&nbsp;</p>
                         <span>{{ total(product) | currency }}</span>
-                        <b-button pill class="float-right mr-4" @click="removeItem(index)" size="sm" variant="dark"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-align-bottom" viewBox="0 0 16 16">
-  <rect width="4" height="12" x="6" y="1" rx="1"/>
-  <path d="M1.5 14a.5.5 0 0 0 0 1v-1zm13 1a.5.5 0 0 0 0-1v1zm-13 0h13v-1h-13v1z"/>
-</svg></b-button>
+                        <b-button pill class="ml-2 btn-close" @click="removeItem(index)" size="sm" variant="dark"><i class="fa fa-close"></i></b-button>
                       </td>
                     </tr>
                     <tr>
@@ -1038,12 +1035,13 @@ export default {
             discount: this.note.discount,
             voucher: response.data.data,
             products: this.products,
-            customer: {
-              name: this.note.customer_id.business_name,
+            customer_data: {
+              business_name: this.note.customer_id.business_name,
               nit: this.note.nit
             }
           }
           this.checkNote = note
+          // console.log(this.checkNote)
           this.visibleNote = true
         }
       } catch (err) {
@@ -1581,11 +1579,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.btn-group-sm > .btn, .btn-sm {
-    font-size: .650rem;
-    line-height: 1.5;
-    border-radius: .2rem;
-  }
+.btn-close {
+  font-size: .650rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
 $white: #fff;
 $gray:#4f5b63;
 .middle {

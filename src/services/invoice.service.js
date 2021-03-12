@@ -40,6 +40,15 @@ const InvoiceService = {
     }
   },
 
+  updateInvoice: async function(id, data) {
+    try {
+      const response = await ApiService.put(`invoices/${id}`, data)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   downloadInvoice: async function(id, type) {
     try {
       const options = {
