@@ -7,6 +7,8 @@
       :access="'invoices'"
       @hide="visibleModal = !visibleModal"
     ></modal-grid>
+    <modal-edit-note v-if="editNote" :note="editNote" :visible="visibleEdit" @hide="closeModalEditNote">
+    </modal-edit-note>
     <modal-note  v-if="checkNote" :note="checkNote" :visible="visibleNote" @hide="closeModalNote">
     </modal-note>
     <div class="row justify-content-center">
@@ -98,6 +100,10 @@
               :filterable-cell-show-operators="false"
               :filterable-cell-template="customerFilter"
             ></kendo-grid-column>
+            <kendo-grid-column
+              :command="[{className: 'k-grid-edit', name: 'edit', text: '', iconClass: 'fa fa-edit', click: openModalEdit}]" 
+              :width="55"
+            ></kendo-grid-column>
           </kendo-grid>
         </div>
       </div>
@@ -113,6 +119,7 @@ import { API_URL } from "../../services/config"
 import NoteService from "../../services/note.service"
 import ModalGrid from "../widgets/Modals/ModalGridInvoice.vue"
 import ModalNote from "../widgets/Modals/ModalNote.vue"
+import ModalEditNote from "../widgets/Modals/ModalEditNote.vue"
 
 export default {
   data() {
@@ -147,8 +154,9 @@ export default {
       noteId: null,
       visibleModal: false,
       visibleNote: false,
-      loadingAlert: false,
       checkNote: null,
+      visibleEdit: false,
+      editNote: null,
     }
   },
 
@@ -159,6 +167,7 @@ export default {
   components: {
     "modal-grid": ModalGrid,
     "modal-note": ModalNote,
+    "modal-edit-note": ModalEditNote,
   },
 
   mixins: [permission],
@@ -240,6 +249,16 @@ export default {
     closeModalNote() {
       this.visibleNote = false
       this.checkNote = null
+    },
+
+    openModalEdit(ev) {
+      ev.preventDefault()
+      // this.visibleEdit = true
+    },
+
+    closeModalEditNote() {
+      this.$refs.grid.kendoWidget().dataSource.read()
+      this.visibleEdit = false
     },
 
     templateNumber(dataItem) {
@@ -391,8 +410,14 @@ export default {
         let element = e.target || e.srcElement
         let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
         vm.checkNote = obj
-        // console.log(obj)
         vm.visibleNote = true
+      })
+
+      grid.element.on("click", "tbody tr[data-uid] td:nth-child(7)", function(e) {
+        let element = e.target || e.srcElement
+        let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
+        vm.editNote = obj
+        vm.visibleEdit = true
       })
     },
 

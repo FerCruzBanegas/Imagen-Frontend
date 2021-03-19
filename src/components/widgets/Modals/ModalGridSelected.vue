@@ -26,13 +26,13 @@
         </table>
       </div>
       <hr />
-      <div class="row">
+      <div class="row" v-if="permission(`${access}.destroy`)">
         <div class="col-12 col-md-12 col-lg-6 col-xl-6">
           <small>
             <strong>Pulse el botón si desear eliminar todos los registros de la lista.</strong>
           </small>
         </div>
-        <div v-if="permission(`${access}.destroy`)" class="col-12 col-md-12 col-lg-6 col-xl-6">
+        <div class="col-12 col-md-12 col-lg-6 col-xl-6">
           <b-popover
             target="popover-delete"
             triggers="click"

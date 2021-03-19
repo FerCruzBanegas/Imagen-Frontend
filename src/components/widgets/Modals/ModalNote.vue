@@ -13,7 +13,7 @@
       <b-button squared size="sm" variant="outline-danger" @click="onClose">X</b-button>
     </template>
     <div>
-      <a-spin :spinning="loading">
+      <a-spin v-if="note" :spinning="loading">
         <div class="invoice-box">
             <div id="light-table">
             <div id="leftdivcontainer" class="clearfix">
@@ -95,10 +95,10 @@
               </table>
             </div>
             <div id="light-table">
-            <div style="border: 2px solid #9e0207; border-radius: 7px; color: black;">
+              <div style="border: 2px solid #9e0207; border-radius: 7px; color: black;">
                 <div style="margin: 12px;"><b>Son:</b> {{ note.total | toLetters }}</div>
-            </div>
-            <div style="color: black;"><b>Nota:</b> Este documento no es válido para crédito fiscal.</div>
+              </div>
+              <div style="color: black;"><b>Nota:</b> Este documento no es válido para crédito fiscal.</div>
             </div>
             <div class="wrap">
                 <div class="left">AUTORIZADO POR</div>

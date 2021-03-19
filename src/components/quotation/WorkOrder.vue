@@ -701,7 +701,7 @@ export default {
         return newObj
       })
       try {
-        this._save = await TaskService.storeTask({tasks: data, work_order: this.work_order.id})
+        this._save = await TaskService.storeTask({tasks: data, work_order: this.quotation.work_order.id})
         if (this._save.status === 201 || this._save.status === 200) {
           this.quotation.work_order.tasks = this._save.data.data
           this.loadingTasks = false

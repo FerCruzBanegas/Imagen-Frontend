@@ -736,13 +736,21 @@ export default {
       this.$validator.errors.clear()
       this.loading = true
       try {
-        this.payment['model'] = this.model
-        this.payment['type_id'] = this.type_id
-        this.payment.amount = Number(this.toFloat(this.payment.amount))
+        // this.payment['model'] = this.model
+        // this.payment['type_id'] = this.type_id
+        let payment = {
+          date: this.payment['date'],
+          type: this.payment['type'],
+          path: this.payment['path'],
+          amount: Number(this.toFloat(this.payment['amount'])),
+          model: this.model,
+          type_id: this.type_id,
+        }
+        // this.payment.amount = Number(this.toFloat(this.payment.amount))
         if(this.payment.id) {
-          this._save = await PaymentService.updatePayment(this.payment.id, this.payment)
+          this._save = await PaymentService.updatePayment(this.payment.id, payment)
         } else {
-          this._save = await PaymentService.storePayment(this.payment)
+          this._save = await PaymentService.storePayment(payment)
         }
         if (this._save.status === 201 || this._save.status === 200) {
           if(this.payments.some(item => item.id === this._save.data.data.id)) {
