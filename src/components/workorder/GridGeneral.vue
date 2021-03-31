@@ -199,10 +199,15 @@ export default {
     },
 
     templateNumber(dataItem) {
+      // return (
+      //   "<span class='btn btn-link' style='font-size: 13px;'>" +
+      //   kendo.htmlEncode(dataItem.number) +
+      //   "</span>"
+      // )
       return (
-        "<span class='btn btn-link' style='font-size: 13px;'>" +
+        "<a href='/servicios/cotizaciones/" + dataItem.id +"?tab=2' class='btn btn-link'>" +
         kendo.htmlEncode(dataItem.number) +
-        "</span>"
+        "</a>"
       )
     },
 
@@ -288,11 +293,11 @@ export default {
 
       e.sender.select(itemsToSelect)
 
-      grid.element.on("click", "tbody tr[data-uid] td:nth-child(2)", function(e) {
-         let element = e.target || e.srcElement
-         let data = grid.dataItem($(element).closest("tr"))
-         vm.$router.push({name: "ShowQuotation", params: { id: data.quotation_id }, query: { tab: 2}})
-      })
+      // grid.element.on("click", "tbody tr[data-uid] td:nth-child(3)", function(e) {
+      //    let element = e.target || e.srcElement
+      //    let data = grid.dataItem($(element).closest("tr"))
+      //    vm.$router.push({name: "ShowQuotation", params: { id: data.quotation_id }, query: { tab: 2}})
+      // })
     },
 
     async pdfListWorkOrder() {
