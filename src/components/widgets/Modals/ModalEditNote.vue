@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="note">
     <modal-note
       :note="noteItem" 
       :visible="visibleNote" 
@@ -20,11 +20,18 @@
       </template>
       <a-spin :spinning="success">
         <div class="container">
-          <div class="d-flex justify-content-center"><h1 class="font-weight-bold">NOTA DE REMISION</h1></div>
-          <small class="float-right font-weight-bold"><i class="fa fa-exclamation-circle fa-lg" style="color:red"></i> Solo podrá editar datos del detalle en la nota emitida.</small>
+          <div class="row">
+            <div class="col-md-3">
+              <span class="font-weight-bold">Nº: {{ note.number }}</span>
+            </div>
+            <div class="col-md-6">
+              <div class="text-center"><h1 class="font-weight-bold">NOTA DE REMISION</h1></div>
+            </div>
+          </div>
+          <small class="float-right font-weight-bold"><i class="fa fa-exclamation-circle fa-lg" style="color:red"></i> Solo podrá editar datos de los items en la nota emitida.</small>
           <fieldset class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
             <legend>Datos Generales:</legend>
-            <!-- <pre>{{ note }}</pre> -->
+            <!-- <pre>{{ $data }}</pre> -->
             <div class="container">
               <div class="row bg-secondary">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 border">
@@ -62,6 +69,54 @@
               </div>
             </div> 
           </fieldset>
+          <div class="row mt-2">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+              <div class="border border-dark">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm-8 my-2">
+                      <div class="d-table-cell w-100">
+                        <v-select
+                          label="name"
+                          :filterable="false"
+                          :options="productsList"
+                          v-model="product"
+                          @search="onSearchProduct"
+                        >
+                          <template slot="no-options">Buscar productos..</template>
+                          <template slot="option" slot-scope="product">
+                            <div>
+                              <strong>{{ product.name }}</strong>
+                            </div>
+                          </template>
+                          <template slot="selected-option" slot-scope="product">
+                            <div>
+                              <strong>{{ product.name }}</strong>
+                            </div>
+                          </template>
+                        </v-select>
+                      </div>
+                      <div class="d-table-cell align-middle">
+                        <b-button title="Agregar Producto" @click="addProduct" style="height: 2.5em;" size="sm" class="ml-2" variant="dark">
+                          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </b-button>
+                      </div>
+                      <div class="d-table-cell align-middle">
+                        <b-button title="Recargar Datos" @click="getProductsNote" style="height: 2.5em;" size="sm" class="mx-2" variant="success">
+                          <i class="fa fa-refresh" aria-hidden="true"></i>
+                        </b-button>
+                      </div>
+                      <div class="d-table-cell align-middle">
+                        <b-button title="Borrar Todos" @click="removeAllProducts" style="height: 2.5em;" size="sm" variant="danger">
+                          <i class="fa fa-trash" aria-hidden="true"></i>
+                        </b-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
               <div id="light-table"  class="table-responsive" style="margin-top: 5px;">
@@ -72,13 +127,14 @@
                     <th style="color: #9e0207; padding:10px; width: 100px; font-weight: bold; font-size: 20px;">P. UNIT.</th>
                     <th style="color: #9e0207; padding:10px; width: 120px; font-weight: bold; font-size: 20px;">SUB TOTAL</th>
                   </tr>
-                  <tr v-for="(product, index) in note.products" :key="index" class="invoice_line" style="text-align: center;">
+                  <tr v-for="(product, index) in products" :key="index" class="invoice_line" style="text-align: center;">
                     <td style="color: #000000; font-size: 15px; font-weight: bold;">
                       <p style="margin-bottom: 0;">&nbsp;</p>
-                      <span>{{ product.quantity }}</span>
+                      <!-- <span>{{ product.quantity }}</span> -->
+                      <b-form-input v-model="product.quantity" @focus="$event.target.select()" class="text-center" type="number" min="1" @keydown="filterKey" @keyup="change(product)"></b-form-input>
                     </td>
                     <td style="color: #000000; text-align: justify; font-size: 15px;">
-                      <!-- <p style="text-align: center; margin-bottom: 0; font-weight: bold;">{{ product.name }}</p> -->
+                      <p style="text-align: center; margin-bottom: 0; font-weight: bold;">{{ product.name }}</p>
                       <b-form-textarea
                         rows="3"
                         style="font-size: 12px; font-weight: bold;border-color: #9e0207;outline: 0px;box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, #9e020761 0px 0px 8px;"
@@ -87,18 +143,26 @@
                     </td>
                     <td style="color: #000000; font-size: 15px; font-weight: bold;">
                       <p style="margin-bottom: 0;">&nbsp;</p>
-                      <span>{{ product.price }}</span>
+                      <!-- <span>{{ product.price }}</span> -->
+                      <b-form-input class="text-center" v-model.lazy="product.price" v-money="money"></b-form-input>
                     </td>
                     <td style="color: #000000; font-size: 16px; font-weight: bold;">
                       <p style="margin-bottom: 0; ">&nbsp;</p>
                       <span>{{ total(product) | currency }}</span>
+                      <b-button pill class="ml-2 btn-close" @click="removeItem(index)" size="sm" variant="dark"><i class="fa fa-close"></i></b-button>
                     </td>
                   </tr>
                   <tr>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
+                    <td><div class="text-right font-weight-bold h6" style="margin-bottom: 0;">SUBTOTAL</div></td>
+                    <td><div class="text-center font-weight-bold h6" style="margin-bottom: 0;">{{ subTotal | currency }}</div></td>
+                  </tr>
+                  <tr>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
+                    <td><div class="text-right font-weight-bold h6 mt-2">DESCUENTO</div></td>
+                    <td><b-form-input v-model="note.discount" v-money="money" class="text-center" size="sm"></b-form-input></td>
                   </tr>
                   <tr class="invoice_line">
                     <td colspan="3" style="text-align: right; border-top: 2px solid #9e0207; color: #474747; font-size: 20px; font-weight: bold; padding:16px;">TOTAL Bs.</td>
@@ -106,7 +170,26 @@
                   </tr>
                 </table>
               </div>
-              <div v-if="error">
+              <div class="row">
+                <div class="col-md-12">
+                  <strong>
+                    <label for="note.summary">Resumen (Glosa para reporte):</label>
+                  </strong>
+                  <b-form-group label-for="note.summary" :invalid-feedback="errors.first('note.summary')" :state="!errors.has('note.summary')">
+                    <b-form-textarea
+                      v-model="note.summary"
+                      :state="errors.has('note.summary') ? false : null"
+                      v-validate="'min:3|max:500'"
+                      data-vv-name="note.summary"
+                      data-vv-as="resumen"
+                      placeholder="Resumen (Glosa para reporte)"
+                      rows="2"
+                      style="font-size: 12px; font-weight: bold;border-color: #9e0207;outline: 0px;box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, #9e020761 0px 0px 8px;"
+                    ></b-form-textarea>
+                  </b-form-group>
+                </div>
+              </div>
+              <div class="pt-2" v-if="error">
                 <b-alert show variant="warning">
                   <h4 class="alert-heading">Revisa los siguientes errores!</h4>
                   <ul id="v-for-object">
@@ -157,36 +240,52 @@
   </div>
 </template>
 <script>
+import {VMoney} from 'v-money'
+import Money from '../../../models/Money'
 import formatter from '../../../mixins/formatter'
 import ModalNote from "./ModalNote.vue"
-import VoucherService from '../../../services/voucher.service'
+import ProductService from '../../../services/product.service'
 import NoteService from '../../../services/note.service'
 
 export default {
   props: {
     visible: Boolean,
-    note: Object,
   },
 
   data() {
     return {
+      money: new Money(),
       success: false,
       noteItem: null,
       popoverEditNote: false,
       visibleNote: false,
       error: null,
+      productsList: [],
+      product: null,
+      note: null,
+      products: [],
     }
   },
  
   mixins: [formatter],
 
+  directives: {
+    money: VMoney,
+  },
+
   components: {
     "modal-note": ModalNote,
   },
 
+  watch: {
+    product: function (value) {
+      if(value) this.addProduct()
+    }
+  },
+
   computed: {
     subTotal() {
-      let total = this.note.products.reduce((acc, item) => {
+      let total = this.products.reduce((acc, item) => {
         let val = 0
         val = parseInt(item.quantity) * parseFloat(this.toFloat(item.price)).toFixed(2)
         item.subtotal = parseFloat(val).toFixed(2)
@@ -198,14 +297,81 @@ export default {
     grandTotal() 
     {
       let total = 0
-      total = this.subTotal
+      total = (this.subTotal - this.toFloat(this.note.discount))
+      this.note.total = this.toFloat(total)
       return isNaN(total) ? 0 : Number(parseFloat(total).toFixed(2))
     }
   },
 
+  created() {
+    this.$bus.$on('setObjNote', data => {
+      this.note = data
+      this.products = Array.from(data.products)
+    })
+  },
+
   methods: {
+    onSearchProduct(search, loading) {
+      loading(true)
+      this.searchProduct(loading, search, this)
+    },
+
+    searchProduct: _.debounce(async (loading, search, vm) => {
+      const data = {
+        column: 'name',
+        value: search
+      }
+      try {
+        const products = await ProductService.searchProduct(data)
+        if (products.status === 200) {
+          vm.productsList = products.data
+          loading(false)
+        }
+      } catch (err) {
+        if (err.response.status === 404) {
+          vm.productsList = []
+          loading(false)
+        }
+      }
+    }, 350),
+
+    addProduct() {
+      if (this.product) {
+        let obj = {
+          id: this.product.id,
+          name: this.product.name,
+          quantity: 1,
+          description: '',
+          price: 0,
+          subtotal: 0,
+        }
+        this.products.push(obj)
+      }
+    },
+
+    getProductsNote: async function(note) {
+      try {
+        this.success = true
+        const response = await NoteService.showNote(`notes/products/${this.note.id}`)
+        if (response.status === 200) {
+          this.products = response.data.data.products
+          this.success = false
+        }
+      } catch (err) {
+        this.success = false
+      }
+    },
+
+    removeAllProducts() {
+      this.products = []
+    },
+
     total(product) {
       return parseInt(product.quantity) * this.toFloat(product.price) 
+    },
+
+    change(product) {
+      if (product.quantity == '' || product.quantity == 0) product.quantity = 1
     },
 
     filterKey(e){
@@ -223,101 +389,99 @@ export default {
     onClosePopoverNote() {
       this.popoverEditNote = false
     },
-    
-    addItemDetail() {
-      this.note.details.push({description: ''})
+
+    removeItem(index) {
+      if (index > -1) this.products.splice(index, 1)
     },
-
-    // deleteItemDetail(index) {
-    //   if (index > -1) this.invoice.details.splice(index, 1)
-    // },
-
+    
     async viewNote() {
       try {
-        let data = {office: this.note.voucher.office.id}
-        const response = await VoucherService.getVoucher(data)
-        if (response.status === 200) {
-            console.log(response.data)
-        //   let invoice = {
-        //     date: this.invoice.date,
-        //     total: this.invoice.total,
-        //     title: this.invoice.title,
-        //     footer: this.invoice.footer,
-        //     details: this.invoice.details,
-        //     state_data: this.invoice.state,
-        //     license: response.data.data,
-        //     products: this.invoice.products,
-        //     customer_data: {
-        //       business_name: this.invoice.customer_data.business_name,
-        //       nit: this.invoice.customer_data.nit
-        //     }
-        //   }
-        //   this.$bus.$emit('getCheckInvoice', invoice)
-          let note = {
-            date: this.note.date,
-            subtotal: this.subTotal,
-            total: this.note.total,
-            discount: this.note.discount,
-            voucher: response.data.data,
-            products: this.note.products,
-            customer_data: {
-              business_name: this.note.customer_data.business_name,
-              nit: this.note.customer_data.nit
-            }
+        let note = {
+          number: this.note.number,
+          date: this.note.date,
+          subtotal: this.subTotal,
+          total: this.note.total,
+          discount: this.note.discount,
+          voucher: this.note.voucher,
+          products: this.products,
+          customer_data: {
+            business_name: this.note.customer_data.business_name,
+            nit: this.note.customer_data.nit
           }
-
-          this.noteItem = note
-          this.visibleNote = true
         }
+
+        this.noteItem = note
+        this.visibleNote = true
       } catch (err) {
-        // this.visibleNote = false
+        this.visibleNote = false
       }
     },
 
     async submit() {
       this.error = null
       this.success = true
+      
+      let note = {
+        total: this.note.total,
+        discount: this.note.discount,
+        summary: this.note.summary,
+      }
 
-      let title = this.invoice.title
-      let footer = this.invoice.footer
-      let details = this.invoice.details.map(obj => obj.description).join('|')
-
-      let products = this.invoice.products.map(item => {
+      let products = this.products.map(item => {
         let obj = new Object()
         obj.id = item.id
+        obj.quantity = item.quantity
         obj.description = item.description
+        obj.price = this.toFloat(item.price)
+        obj.subtotal = this.toFloat(item.subtotal)
         return obj
       })
-      this.onClosePopoverInvoice()
+
+      this.onClosePopoverNote()
       try {
-        const response = await InvoiceService.updateInvoice(this.invoice.id, {title: title, footer: footer, details: details, products: products})
+        const response = await NoteService.updateNote(this.note.id, {note: note, products: products})
         if (response.status === 200) {
-          this.error = null
           this.success = false
           this.onClose()
           this.$message.success(response.data.message)
         }
       } catch (err) {
-        this.onClosePopoverInvoice()
+        this.onClosePopoverNote()
         if (err.response.status === 422) {
           this.$setErrorsFromResponse(err.response.data)
           this.error = err.response.data.errors
+        }
+        if (err.response.status === 406) {
+          this.onClose()
+          this.$notification.warning({
+            message: 'Alerta',
+            description: err.response.data,
+            duration: 10,
+            placement: 'bottomRight'
+          })
         }
         this.success = false
       }
     },
 
     onClose() {
+      this.error = null
       this.$emit("hide")
     }
   }
 }
 </script>
 <style scoped>
+.btn-close {
+  font-size: .650rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .1s
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter, .fade-leave-to {
   opacity: 0
 }
 

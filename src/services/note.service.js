@@ -31,9 +31,27 @@ const NoteService = {
     }
   },
 
+  showNote: async function(url) {
+    try {
+      const response = await ApiService.get(url)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   storeNote: async function(data) {
     try {
       const response = await ApiService.post('/notes', data)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  updateNote: async function(id, data) {
+    try {
+      const response = await ApiService.put(`notes/${id}`, data)
       return response
     } catch (error) {
       throw error

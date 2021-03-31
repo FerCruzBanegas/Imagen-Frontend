@@ -262,6 +262,25 @@
                     </tr>
                   </table>
                 </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <strong>
+                      <label for="invoice.summary">Resumen (Glosa para reporte):</label>
+                    </strong>
+                    <b-form-group label-for="invoice.summary" :invalid-feedback="errors.first('invoice.summary')" :state="!errors.has('invoice.summary')">
+                      <b-form-textarea
+                        v-model="invoice.summary"
+                        :state="errors.has('invoice.summary') ? false : null"
+                        v-validate="'min:3|max:500'"
+                        data-vv-name="invoice.summary"
+                        data-vv-as="resumen"
+                        placeholder="Ésta descripción solo será visible en los reportes contables."
+                        rows="2"
+                        style="font-size: 12px; font-weight: bold;border-color: #9e0207;outline: 0px;box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, #9e020761 0px 0px 8px;"
+                      ></b-form-textarea>
+                    </b-form-group>
+                  </div>
+                </div>
                 <div v-if="error">
                   <b-alert show variant="warning">
                     <h4 class="alert-heading">Revisa los siguientes errores!</h4>
@@ -567,6 +586,25 @@
                     </tr>
                   </table>
                 </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <strong>
+                      <label for="note.summary">Resumen (Glosa para reporte):</label>
+                    </strong>
+                    <b-form-group label-for="note.summary" :invalid-feedback="errors.first('note.summary')" :state="!errors.has('note.summary')">
+                      <b-form-textarea
+                        v-model="note.summary"
+                        :state="errors.has('note.summary') ? false : null"
+                        v-validate="'min:3|max:500'"
+                        data-vv-name="note.summary"
+                        data-vv-as="resumen"
+                        placeholder="Resumen (Glosa para reporte)"
+                        rows="2"
+                        style="font-size: 12px; font-weight: bold;border-color: #9e0207;outline: 0px;box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, #9e020761 0px 0px 8px;"
+                      ></b-form-textarea>
+                    </b-form-group>
+                  </div>
+                </div>
                 <div v-if="error">
                   <b-alert show variant="warning">
                     <h4 class="alert-heading">Revisa los siguientes errores!</h4>
@@ -598,9 +636,6 @@
             </b-popover>
             <div class="row my-2">
               <div class="col-12 col-md-12 col-lg-6 col-xl-6">
-                <div>
-                  Una vez registrados los datos no se podrán modificar.
-                </div>
               </div>
               <div class="col-12 col-md-12 col-lg-6 col-xl-6">
                 <b-button 

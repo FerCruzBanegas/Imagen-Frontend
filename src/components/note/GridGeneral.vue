@@ -7,7 +7,7 @@
       :access="'invoices'"
       @hide="visibleModal = !visibleModal"
     ></modal-grid>
-    <modal-edit-note v-if="editNote" :note="editNote" :visible="visibleEdit" @hide="closeModalEditNote">
+    <modal-edit-note :visible="visibleEdit" @hide="closeModalEditNote">
     </modal-edit-note>
     <modal-note  v-if="checkNote" :note="checkNote" :visible="visibleNote" @hide="closeModalNote">
     </modal-note>
@@ -416,7 +416,7 @@ export default {
       grid.element.on("click", "tbody tr[data-uid] td:nth-child(7)", function(e) {
         let element = e.target || e.srcElement
         let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
-        vm.editNote = obj
+        vm.$bus.$emit('setObjNote', obj)
         vm.visibleEdit = true
       })
     },

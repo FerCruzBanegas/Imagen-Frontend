@@ -20,7 +20,14 @@
       </template>
       <a-spin :spinning="success">
         <div class="container">
-          <div class="d-flex justify-content-center"><h1 class="font-weight-bold">FACTURA</h1></div>
+          <div class="row">
+            <div class="col-md-3">
+              <span class="font-weight-bold">Nº: {{ invoice.number }}</span>
+            </div>
+            <div class="col-md-6">
+              <div class="text-center"><h1 class="font-weight-bold">FACTURA</h1></div>
+            </div>
+          </div>
           <small class="float-right font-weight-bold"><i class="fa fa-exclamation-circle fa-lg" style="color:red"></i> Solo podrá editar datos del detalle en la factura emitida.</small>
           <fieldset class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
             <legend>Datos Generales:</legend>
@@ -105,7 +112,26 @@
                   </tr>
                 </table>
               </div>
-              <div v-if="error">
+              <div class="row">
+                <div class="col-md-12">
+                  <strong>
+                    <label for="invoice.summary">Resumen (Glosa para reporte):</label>
+                  </strong>
+                  <b-form-group label-for="invoice.summary" :invalid-feedback="errors.first('invoice.summary')" :state="!errors.has('invoice.summary')">
+                    <b-form-textarea
+                      v-model="invoice.summary"
+                      :state="errors.has('invoice.summary') ? false : null"
+                      v-validate="'min:3|max:500'"
+                      data-vv-name="invoice.summary"
+                      data-vv-as="resumen"
+                      placeholder="Ésta descripción solo será visible en los reportes contables."
+                      rows="2"
+                      style="font-size: 12px; font-weight: bold;border-color: #9e0207;outline: 0px;box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, #9e020761 0px 0px 8px;"
+                    ></b-form-textarea>
+                  </b-form-group>
+                </div>
+              </div>
+              <div class="pt-2" v-if="error">
                 <b-alert show variant="warning">
                   <h4 class="alert-heading">Revisa los siguientes errores!</h4>
                   <ul id="v-for-object">
@@ -117,7 +143,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row pt-2">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <strong>
                 <label for="invoice.title">Título:</label>
@@ -314,10 +340,13 @@ export default {
     async submit() {
       this.error = null
       this.success = true
-
-      let title = this.invoice.title
-      let footer = this.invoice.footer
-      let details = this.invoice.details.map(obj => obj.description).join('|')
+      
+      let invoice = {
+        title: this.invoice.title,
+        footer: this.invoice.footer,
+        details: this.invoice.details.map(obj => obj.description).join('|'),
+        summary: this.invoice.summary,
+      }
 
       let products = this.invoice.products.map(item => {
         let obj = new Object()
@@ -327,9 +356,8 @@ export default {
       })
       this.onClosePopoverInvoice()
       try {
-        const response = await InvoiceService.updateInvoice(this.invoice.id, {title: title, footer: footer, details: details, products: products})
+        const response = await InvoiceService.updateInvoice(this.invoice.id, {invoice: invoice, products: products})
         if (response.status === 200) {
-          this.error = null
           this.success = false
           this.onClose()
           this.$message.success(response.data.message)
@@ -345,6 +373,7 @@ export default {
     },
 
     onClose() {
+      this.error = null
       this.$emit("hide")
     }
   }

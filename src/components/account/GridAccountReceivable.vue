@@ -643,63 +643,23 @@ export default {
       let vm = this;
       reader.onload = (e) => {
         path.url = e.target.result
-        let pdfAsArray = vm.convertDataURIToBinary(e.target.result)
-        let imageData = vm.getPdf(pdfAsArray)
-        // path.url = imageData
-        // console.log(e.target.result)
       }
       reader.readAsDataURL(file)
     },
 
-    convertDataURIToBinary(dataURI) {
-			let base64Index = dataURI.indexOf(this.base64_marker) + this.base64_marker.length;
-			let base64 = dataURI.substring(base64Index);
-			let raw = window.atob(base64);
-			let rawLength = raw.length;
-			let array = new Uint8Array(new ArrayBuffer(rawLength));
+    // convertDataURIToBinary(dataURI) {
+		// 	let base64Index = dataURI.indexOf(this.base64_marker) + this.base64_marker.length;
+		// 	let base64 = dataURI.substring(base64Index);
+		// 	let raw = window.atob(base64);
+		// 	let rawLength = raw.length;
+		// 	let array = new Uint8Array(new ArrayBuffer(rawLength));
 
-			for(let i = 0; i < rawLength; i++) {
-				array[i] = raw.charCodeAt(i);
-			}
-			return array;
-		},
-
-    getPdf(pdfAsArray) {
-      let data
-      // PDFJS.getDocument(pdfAsArray).then(function (pdf) {
-      //   getPage();
-      //   function getPage() {
-      //     pdf.getPage(1).then(function(page) {
-      //         var viewport = page.getViewport(1.5);
-      //         var canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
-      //         var renderContext = { canvasContext: ctx, viewport: viewport };
-
-      //         canvas.height = viewport.height;
-      //         canvas.width = viewport.width;
-      //         data = canvas.toDataURL()
-      //     })
-      //   }
-      // })
-      
-      PDFJS.getDocument(pdfAsArray).promise.then(pdf => {
-        console.log(pdf)
-      });
-      // loadingTask.promise.then(pdf => {
-      //   pdf.getPage(1).then(function(page) {
-      //       let viewport = page.getViewport(1.5);
-      //       let canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
-      //       let renderContext = { canvasContext: ctx, viewport: viewport };
-
-      //       canvas.height = viewport.height;
-      //       canvas.width = viewport.width;
-      //       data = canvas.toDataURL()
-      //       console.log(canvas.toDataURL())
-      //   })
-      //   // console.log(pdf)
-      // });
-      // return data
-    },
-
+		// 	for(let i = 0; i < rawLength; i++) {
+		// 		array[i] = raw.charCodeAt(i);
+		// 	}
+		// 	return array;
+		// },
+    
     editPayment(row) {
       let {parent, _events, _handlers, uid,...obj} = row.item
       this.payment = obj

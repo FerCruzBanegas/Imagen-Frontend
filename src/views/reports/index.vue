@@ -81,7 +81,7 @@
         </fieldset>
       </div>
       <div class="d-flex justify-content-end pt-2"><div><strong>Total {{ items.length }} ítems</strong></div></div>
-      <div class="row mt-2">
+      <!-- <div class="row mt-2">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
           <div v-if="items.length > 0" class="p-2" style="background-color: #e8e8e8;">
             <b-button @click="downloadPdf" title="Descargar PDF" variant="danger" class="mr-2">
@@ -116,7 +116,11 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
+      <b-button @click="test" title="Descargar PDF" variant="danger" class="mr-2">
+        <i class="fa fa-file-pdf-o"></i>
+      </b-button>
+      <table-account-customer :items="items"></table-account-customer>
     </a-spin>
   </div>
 </template>
@@ -129,6 +133,7 @@
   import ReportService from '../../services/report.service'
   import CustomerService from '../../services/customer.service'
   import UserService from '../../services/user.service'
+  import TableAccountCustomer from '../../components/widgets/Tables/TableAccountCustomer.vue'
 
   export default {
     mixins: [formatter],
@@ -142,6 +147,7 @@
         report: null,
         reports: [
           { label: 'Total Importe Cotizaciones', value: 'reports/total_quotations'},
+          { label: 'Reporte de Facturación', value: 'reports/invoice_report'},
           { label: 'Lista Cotizaciones Emitidas (General)', value: 'reports/quotation_general'},
           { label: 'Lista Cotizaciones Emitidas (Pendientes)', value: 'reports/quotation_pending'},
           { label: 'Lista Cotizaciones Emitidas (Aprobadas)', value: 'reports/quotation_approved'},
@@ -157,6 +163,10 @@
         dateFormat: 'YYYY/MM/DD',
         date: null,
       }
+    },
+
+    components: {
+      'table-account-customer': TableAccountCustomer
     },
 
     computed: {
@@ -219,6 +229,33 @@
         }
       }, 350),
 
+      test: async function() {
+        // this.loading = true
+        try {
+          let config = {
+            method: 'post',
+            url: 'reports/get_accounts',
+            data: {
+              // initial_date: moment(this.date[0]).format('YYYY-MM-DD'),
+              // final_date: moment(this.date[1]).format('YYYY-MM-DD'),
+              office: this.office,
+              customer: this.customer ? this.customer.id : null,
+              user: this.user
+            }
+          }
+          const response = await ReportService.getReport(config)
+          if (response.status === 200) {
+            // console.log(response)
+            this.items = response.data.data
+            console.log(this.items)
+            // this.loading = false
+          }
+        } catch (err) {
+          this.loading = false
+          console.log(err)
+        }
+      },
+
       getReport: async function(quotation) {
         this.loading = true
         try {
@@ -249,6 +286,10 @@
         try {
           this.loading = true
           let title = this.reports.filter(obj => obj.value === this.report)
+          let date = {
+            initial_date: moment(this.date[0]).format('YYYY-MM-DD'),
+            final_date: moment(this.date[1]).format('YYYY-MM-DD'),
+          }
           let items = this.items.map(obj => {
             let rObj = Object.assign({}, obj)
             rObj.monto = Number(this.toFloat(rObj.monto))
@@ -258,7 +299,7 @@
             }
             return rObj
           })
-          const response = await ReportService.downloadPdf({data: items, title: title[0].label})
+          const response = await ReportService.downloadPdf({data: items, title: title[0].label, date: date})
           if (response.status === 200) {
             let blob = new Blob([response.data])
             let link = document.createElement("a")
