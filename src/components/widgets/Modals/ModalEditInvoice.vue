@@ -28,21 +28,21 @@
               <div class="text-center"><h1 class="font-weight-bold">FACTURA</h1></div>
             </div>
           </div>
-          <small class="float-right font-weight-bold"><i class="fa fa-exclamation-circle fa-lg" style="color:red"></i> Solo podrá editar datos del detalle en la factura emitida.</small>
-          <fieldset class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
-            <legend>Datos Generales:</legend>
+          <small class="float-right font-weight-bold"><i class="fa fa-exclamation-circle fa-lg" style="color:red"></i> Solo podrá editar la fecha y datos del detalle en la factura emitida.</small>
+          <fieldset class="fieldset col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
+            <legend class="legend">Datos Generales:</legend>
             <div class="container">
               <div class="row bg-secondary">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 border">
                   <div class="d-flex justify-content-between my-2">
                     <span class="text-white font-weight-bold">Registrado:</span>
-                    <span class="text-white font-weight-bold">{{ invoice.date | formatDate('DD/MM/YYYY') }}</span>
+                    <span class="text-white font-weight-bold">{{ invoice.created | formatDate('DD/MM/YYYY') }}</span>
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 border">
                   <div class="d-flex justify-content-between my-2">
                     <span class="text-white font-weight-bold">Actualizado:</span>
-                    <span class="text-white font-weight-bold">{{ invoice.date | formatDate('DD/MM/YYYY') }}</span>
+                    <span class="text-white font-weight-bold">{{ invoice.updated | formatDate('DD/MM/YYYY') }}</span>
                   </div>
                 </div>
               </div>
@@ -52,8 +52,19 @@
                   <p>{{ invoice.license.office.city }}</p>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                  <div class="font-weight-bold pt-2 list">Fecha Emisión:</div>
-                  <p>{{ invoice.date | formatDate('DD/MM/YYYY') }}</p>
+                  <strong>
+                    <label for="name">Fecha Emisión * :</label>
+                  </strong>
+                  <b-form-group :invalid-feedback="errors.first('invoice.date')" :state="!errors.has('invoice.date')">
+                    <b-form-input
+                      v-model="invoice.date" 
+                      :state="errors.has('invoice.date') ? false : null"
+                      v-validate="'required'"
+                      data-vv-name="invoice.date"
+                      data-vv-as="fecha"
+                      type="date"
+                    ></b-form-input>
+                  </b-form-group>
                 </div>
               </div>
               <div class="row">
@@ -342,6 +353,7 @@ export default {
       this.success = true
       
       let invoice = {
+        date: this.invoice.date,
         title: this.invoice.title,
         footer: this.invoice.footer,
         details: this.invoice.details.map(obj => obj.description).join('|'),
@@ -397,13 +409,13 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-fieldset {
+.fieldset {
   background-color: #fff;
   border-radius: 4px;
   border: 1px solid black;
 }
 
-legend {
+.legend {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;

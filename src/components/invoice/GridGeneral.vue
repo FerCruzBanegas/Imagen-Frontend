@@ -490,6 +490,7 @@ export default {
       grid.element.on("click", "tbody tr[data-uid] td:nth-child(7)", function(e) {
         let element = e.target || e.srcElement
         let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
+        obj.date = kendo.toString(obj.date, "yyyy-MM-dd")
         vm.editInvoice = obj
         // console.log(obj)
         vm.visibleEdit = true
