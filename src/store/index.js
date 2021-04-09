@@ -10,6 +10,7 @@ import account_cancelled from './account/cancelled'
 import workorder from './workorder'
 import product from './product'
 import material from './material'
+import machine from './machine'
 import customer from './customer'
 import employee from './employee'
 import profile from './profile'
@@ -31,6 +32,7 @@ export default new Vuex.Store({
     workorder,
     product,
     material,
+    machine,
     customer,
     employee,
     profile,

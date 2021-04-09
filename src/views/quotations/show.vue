@@ -188,7 +188,7 @@
             </fieldset>
           </div>
         </b-tab>
-        <b-tab title="Arte Guía" :title-link-class="linkClass(1)">
+        <b-tab title="Arte Guía" :title-link-class="linkClass(1)" lazy>
           <grid-design @approved="quotation.state = 2" :quotation="quotation" />
         </b-tab>
         <b-tab title="Orden de Trabajo" :title-link-class="linkClass(2)" lazy>

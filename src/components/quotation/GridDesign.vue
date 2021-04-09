@@ -70,48 +70,61 @@
                 </b-form-group>
               </div>
               <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
-                <strong>
-                  <label for="machine">Máquina * :</label>
-                </strong>
-                <b-form-group label-for="machine" :invalid-feedback="errors.first('design.machine')" :state="!errors.has('design.machine')">
-                  <!-- <div class="d-table-cell w-100"> -->
-                    <!-- <v-select
-                      label="business_name"
-                      :filterable="false"
-                      :options="customers"
-                      v-model="quotation.customer_id"
-                      @search="onSearchCustomer"
-                      :state="errors.has('quotation.customer_id') ? false : null"
+                <b-form-group label-for="machine_id" :invalid-feedback="errors.first('machine_id')" :state="!errors.has('machine_id')">
+                  <strong>
+                    <label for="machine">Máquina(s) * :</label>
+                  </strong>
+                  <div class="d-table-cell w-100">
+                    <v-select
+                      multiple
+                      label="description"
+                      v-model="row.item.design.machines" 
+                      :options="machines"
+                      :reduce="machine => machine.id"
+                      :state="errors.has('machine_id') ? false : null"
                       v-validate="'required'"
-                      data-vv-name="quotation.customer_id"
-                      data-vv-as="cliente"
-                    >
-                      <template slot="no-options">Buscar clientes..</template>
-                      <template slot="option" slot-scope="customer">
-                        <div>
-                          <strong>{{ customer.business_name }}</strong>
-                        </div>
-                      </template>
-                      <template slot="selected-option" slot-scope="customer">
-                        <div>
-                          <strong>{{ customer.business_name }}</strong>
-                        </div>
-                      </template>
-                    </v-select> -->
-                    <b-form-input
-                      v-available 
-                      v-model="row.item.design.machine" 
-                      :state="errors.has('design.machine') ? false : null"
-                      v-validate="'required|max:64'"
-                      data-vv-name="design.machine"
+                      data-vv-name="machine_id"
                       data-vv-as="máquina"
-                    ></b-form-input>
-                  <!-- </div> -->
-                  <!-- <div class="d-table-cell align-middle">
-                    <b-button style="height: 2.7em;" class="ml-1" size="sm" variant="dark">
+                    ></v-select>
+                  </div>
+                  <div class="d-table-cell align-middle">
+                    <b-popover
+                      target="popover-machine"
+                      triggers="click"
+                      :show.sync="popoverMachine"
+                      placement="auto"
+                      container="my-container"
+                      ref="popover"
+                    >
+                      <template #title>
+                        Nueva Máquina
+                      </template>
+                      <div>
+                        <strong>
+                          <label for="description">Descripción :</label>
+                        </strong>
+                        <b-form-group label-for="description" :invalid-feedback="errors.first('description')" :state="!errors.has('description')" class="mb-2">
+                          <b-form-input
+                            id="popover-description"
+                            v-model="machine.description" 
+                            :state="errors.has('description') ? false : null"
+                            v-validate="'required|max:64'"
+                            data-vv-name="description"
+                            data-vv-as="descripción"
+                            size="sm"
+                          ></b-form-input>
+                        </b-form-group>
+
+                        <b-button :disabled="loaderMachine" @click="onClose" class="btn-add" size="sm" variant="outline-danger">Cancelar</b-button>
+                        <b-button :disabled="loaderMachine" @click="submitMachine" class="btn-add ml-2" size="sm" variant="outline-secondary">
+                          <b-spinner v-if="loaderMachine" small label="Small Spinner" type="grow"></b-spinner> Registrar
+                        </b-button>
+                      </div>
+                    </b-popover>
+                    <b-button id="popover-machine" style="height: 2.5em;" class="ml-1" size="sm" variant="dark">
                       <i class="fa fa-plus-circle" aria-hidden="true"></i>
                     </b-button>
-                  </div> -->
+                  </div>
                 </b-form-group>
               </div>
             </div>
@@ -359,8 +372,10 @@
 </template>
 
 <script>
+import Machine from '../../models/Machine'
 import DesignService from '../../services/design.service'
 import QuotationService from '../../services/quotation.service'
+import MachineService from '../../services/machine.service'
 
 export default {
   props: {
@@ -408,10 +423,51 @@ export default {
       imgSupport: '',
       showDesign: false,
       showSupport: false,
+      machine: new Machine(),
+      machines: [],
+      popoverMachine: false,
+      loaderMachine: false,
     }
+  },
+  
+  created() {
+    this.listMachines()
   },
 
   methods: {
+    onClose() {
+      this.popoverMachine = false
+    },
+
+    async submitMachine() {
+      this.loaderMachine = true
+      this.$validator.errors.clear()
+      try {
+        const response = await MachineService.storeMachine(this.machine)
+        if (response.status === 201) {
+          this.machine = new Machine()
+          this.$validator.pause()
+          this.$nextTick(() => {
+            this.$validator.resume()
+          })
+          this.machines.unshift(response.data.data)
+          this.$message.success(response.data.message)
+          this.popoverMachine = false
+          this.loaderMachine = false
+        }
+      } catch (err) {
+        if(err.response.status === 422) this.$setErrorsFromResponse(err.response.data)
+        this.loaderMachine = false
+      }
+    },
+
+    listMachines: async function() {
+      const machines = await MachineService.listMachines()
+      if (machines.status === 200) {
+        this.machines = machines.data
+      }
+    },
+
     approvedQuotation: async function() {
       this.approved = true
       try {
@@ -431,7 +487,7 @@ export default {
       let design = Object.assign({}, item.design)
       design['cite'] = this.quotation.cite
       design['quantity'] = item.quantity
-      const response = await DesignService.downloadDesign({design: design})
+      const response = await DesignService.downloadDesign({design: design.id})
       if (response.status === 200) {
         let blob = new Blob([response.data])
         let link = document.createElement('a')
@@ -448,7 +504,7 @@ export default {
         let design = Object.assign({}, item.design)
         design['cite'] = this.quotation.cite
         design['quantity'] = item.quantity
-        const response = await DesignService.downloadDesign({design: design})
+        const response = await DesignService.downloadDesign({design: design.id})
         if (response.status === 200) {
           let file = new Blob([response.data], {type: 'application/pdf'})
           let fileUrl = URL.createObjectURL(file)
@@ -581,6 +637,14 @@ export default {
 }
 </script>
 <style lang="css">
+.btn-add {
+  padding: .12rem;
+  font-size: .9rem;
+  font-weight: bold;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
+
 .custom-file-input:lang(en) ~ .custom-file-label::after {
   content: 'Buscar';
 }
@@ -588,6 +652,7 @@ export default {
 .demo-gallery > div {
   margin-bottom: 15px;
   width: 100%;
+  height: 100%;
   display: inline-block;
   margin-right: 10px;
   list-style: outside none none;
@@ -609,8 +674,8 @@ export default {
   transition: transform 0.15s ease 0s;
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1);
-  height: 100%;
-  width: 100%;
+  max-width: 250px;
+  max-height: 300px;
 }
 
 .demo-gallery > div > a:hover > img {

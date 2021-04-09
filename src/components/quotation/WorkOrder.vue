@@ -40,10 +40,10 @@
           </div>
           <div class="row">
             <div class="col-12 col-md-12 col-lg-7 col-xl-7">
-              <strong>
-                <label for="employees">Responsable del Trabajo * :</label>
-              </strong>
               <b-form-group label-for="employees" :invalid-feedback="errors.first('employees')" :state="!errors.has('employees')">
+                <strong>
+                  <label for="employees">Responsable del Trabajo * :</label>
+                </strong>
                 <div class="d-table-cell w-100">
                   <v-select
                     multiple
@@ -59,7 +59,7 @@
                   ></v-select>
                 </div>
                 <div class="d-table-cell align-middle">
-                  <b-button @click="modalEmployee = true" class="ml-1 btn-add" size="sm">
+                  <b-button style="height: 2.5em;" @click="modalEmployee = true" class="ml-1" size="sm">
                     <i class="fa fa-user-plus"></i>
                   </b-button>
                 </div>
@@ -727,17 +727,6 @@ export default {
 }
 </script>
 <style lang="css" scoped>
-  .btn-group-sm > .btn, .btn-sm {
-    padding: .25rem .4rem;
-    font-size: .650rem;
-    line-height: 1.5;
-    border-radius: .2rem;
-    margin: 2px;
-  }
-
-  .btn-add {
-    height: 2.5em;
-  }
   .card {
     margin-bottom: 1rem;
     margin-top: 1rem;

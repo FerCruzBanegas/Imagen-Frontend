@@ -79,6 +79,20 @@
                 {{ message }}
               </b-alert>
               <legend>Datos Generales:</legend>
+              <div class="container">
+                <form>
+                  <div class="form-group row">
+                    <strong><label for="inputPassword" class="col-form-label">OP:</label></strong>
+                    <div class="col-sm-2">
+                      <input type="password" class="form-control" id="inputPassword">
+                    </div>
+                    <strong><label for="inputPassword" class="col-form-label">Número:</label></strong>
+                    <div class="col-sm-2">
+                      <input type="password" class="form-control" id="inputPassword">
+                    </div>
+                  </div>
+                </form>
+              </div>
               <div class="row">
                 <div class="col-sm-12 col-md-4 col-lg-3 col-xl-3 mb-2">
                   <strong><label for="date">Fecha * :</label></strong>
@@ -202,13 +216,10 @@
             <strong>{{ data.value }}</strong>
           </template>
           <template v-slot:cell(path)="data">
-            <div class="air__utils__avatar air__utils__avatar--size50" style="margin:0 auto;">
+            <div class="air__utils__avatar" style="margin:0 auto;">
               <div class="item-gallery">
                 <a v-on:click.prevent="showImageTable(data.value.url)">
                   <img class="img-responsive" :src="data.value.url">
-                  <div class="demo-gallery-poster">
-                    <img src="/img/zoom.png">
-                  </div>
                 </a>
               </div>
             </div>
@@ -659,7 +670,43 @@ export default {
 		// 	}
 		// 	return array;
 		// },
-    
+
+    getPdf(pdfAsArray) {
+      let data
+      // PDFJS.getDocument(pdfAsArray).then(function (pdf) {
+      //   getPage();
+      //   function getPage() {
+      //     pdf.getPage(1).then(function(page) {
+      //         var viewport = page.getViewport(1.5);
+      //         var canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
+      //         var renderContext = { canvasContext: ctx, viewport: viewport };
+
+      //         canvas.height = viewport.height;
+      //         canvas.width = viewport.width;
+      //         data = canvas.toDataURL()
+      //     })
+      //   }
+      // })
+      
+      PDFJS.getDocument(pdfAsArray).promise.then(pdf => {
+        console.log(pdf)
+      });
+      // loadingTask.promise.then(pdf => {
+      //   pdf.getPage(1).then(function(page) {
+      //       let viewport = page.getViewport(1.5);
+      //       let canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
+      //       let renderContext = { canvasContext: ctx, viewport: viewport };
+
+      //       canvas.height = viewport.height;
+      //       canvas.width = viewport.width;
+      //       data = canvas.toDataURL()
+      //       console.log(canvas.toDataURL())
+      //   })
+      //   // console.log(pdf)
+      // });
+      // return data
+    },
+
     editPayment(row) {
       let {parent, _events, _handlers, uid,...obj} = row.item
       this.payment = obj
@@ -667,9 +714,13 @@ export default {
     },
 
     cleanFormPayment() {
+      this.$validator.errors.clear()
       this.payment = new Payment()
       // this.payment.paymentable_id = this.paymentable_id 
-      this.$validator.errors.clear()
+      this.$validator.pause()
+      this.$nextTick(() => {
+        this.$validator.resume()
+      })
     },
 
     hideDetailPayment() {
@@ -984,8 +1035,8 @@ legend {
 }
 
 .demo-gallery > div {
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  height: 100%;
   display: inline-block;
   margin:0 auto;
   list-style: outside none none;
@@ -1006,8 +1057,8 @@ legend {
   transition: transform 0.15s ease 0s;
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1);
-  height: 100%;
-  width: 100%;
+  max-width: 200px;
+  max-height: 250px;
 }
 
 .demo-gallery > div > a:hover > img {
@@ -1059,36 +1110,4 @@ legend {
   transform: scale3d(1.1, 1.1, 1.1);
 }
 
-.air__utils__avatar > div > a:hover .demo-gallery-poster > img {
-  opacity: 1;
-}
-
-.air__utils__avatar > div > a .demo-gallery-poster {
-  background-color: rgba(0, 0, 0, 0.1);
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  -webkit-transition: background-color 0.15s ease 0s;
-  -o-transition: background-color 0.15s ease 0s;
-  transition: background-color 0.15s ease 0s;
-}
-
-.air__utils__avatar > div > a .demo-gallery-poster > img {
-  left: 40%;
-  margin-left: -5px;
-  margin-top: -5px;
-  opacity: 0;
-  position: absolute;
-  top: 40%;
-  width: 20px;
-  -webkit-transition: opacity 0.3s ease 0s;
-  -o-transition: opacity 0.3s ease 0s;
-  transition: opacity 0.3s ease 0s;
-}
-
-.air__utils__avatar > div > a:hover .demo-gallery-poster {
-  background-color: rgba(0, 0, 0, 0.5);
-}
 </style>

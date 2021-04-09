@@ -3,8 +3,8 @@
     <modal-grid
       :title="'Lista de Seleccionados'"
       :visible="visibleModal"
-      :data="itemsMaterial"
-      :access="'materials'"
+      :data="itemsMachine"
+      :access="'machines'"
       :alert_message="'Realmente desea eliminar estos datos?'"
       @hide="visibleModal = !visibleModal"
       @deleted="deleted"
@@ -15,20 +15,20 @@
           <div class="row">
             <div class="col-12 col-md-12 col-lg-4 col-xl-4">
               <strong>
-                <label for="name">Nombre * :</label>
+                <label for="description">Descripción * :</label>
               </strong>
-              <b-form-group label-for="name" :invalid-feedback="errors.first('name')" :state="!errors.has('name')">
+              <b-form-group label-for="description" :invalid-feedback="errors.first('description')" :state="!errors.has('description')">
                 <b-form-input 
-                  v-model="material.name" 
-                  :state="errors.has('name') ? false : null"
-                  v-validate="'required|min:3|max:64'"
-                  data-vv-name="name"
-                  data-vv-as="nombre"
+                  v-model="machine.description" 
+                  :state="errors.has('description') ? false : null"
+                  v-validate="'required|max:64'"
+                  data-vv-name="description"
+                  data-vv-as="descripción"
                   type="text"
                 ></b-form-input>
               </b-form-group>
             </div>
-            <div class="col-12 col-md-12 col-lg-4 col-xl-4">
+            <!-- <div class="col-12 col-md-12 col-lg-4 col-xl-4">
               <strong>
                 <label for="unity">Unidad * :</label>
               </strong>
@@ -64,7 +64,7 @@
                   type="text"
                 ></b-form-input>
               </b-form-group>
-            </div>
+            </div> -->
           </div>
           <div class="row">
             <div class="col-12 col-md-12 col-lg-6 col-xl-6">
@@ -75,7 +75,7 @@
                 @click="submit" 
                 type="submit" 
                 class="float-right" 
-              >{{ material.id ? 'ACTUALIZAR' : 'REGISTRAR' }}</b-button>
+              >{{ machine.id ? 'ACTUALIZAR' : 'REGISTRAR' }}</b-button>
             </div>
           </div>
         </div>
@@ -86,9 +86,9 @@
         <div class="container">
           <div class="row p-2 bg-secondary">
             <div class="col-md-6">
-              <b-button @click="visibleModal = true" v-if="itemsMaterial.length > 0" squared variant="outline-danger" class="mr-2">
+              <b-button @click="visibleModal = true" v-if="itemsMachine.length > 0" squared variant="outline-danger" class="mr-2">
                 <i class="fa fa-check-square"></i>
-                ({{ itemsMaterial.length }}) Seleccionados
+                ({{ itemsMachine.length }}) Seleccionados
               </b-button>
               <b-button @click="visibleForm = true" variant="warning" class="mr-2">
                 <i class="fa fa-plus-circle"></i> Nuevo Registro
@@ -103,10 +103,10 @@
             </div>
           </div>
           <kendo-datasource
-            ref="datasource1"
+            ref="machines"
             :schema-total="'meta.total'"
             :schema-data="'data'"
-            :transport-read="{ url: `${url}/materials`, beforeSend: readData }"
+            :transport-read="{ url: `${url}/machines`, beforeSend: readData }"
             :transport-parameter-map="parameterMap"
             :page-size="10"
             :server-paging="true"
@@ -115,8 +115,8 @@
             :schema-model-fields="dsSchemaFields"
           ></kendo-datasource>
           <kendo-grid
-            ref="grid"
-            :data-source-ref="'datasource1'"
+            ref="grid_machine"
+            :data-source-ref="'machines'"
             :no-records="true"
             :messages-no-records="'NO EXISTEN RESULTADOS'"
             :groupable="true"
@@ -134,23 +134,11 @@
           >
             <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
             <kendo-grid-column
-              :field="'name'"
-              :title="'NOMBRE'"
-              :width="120"
-              :filterable-cell-operator="'contains'"
-              :filterable-cell-suggestion-operator="'contains'"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'unity'"
-              :title="'UNIDAD'"
-              :width="120"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column
               :field="'description'"
               :title="'DESCRIPCIÓN'"
               :width="120"
-              :filterable="false"
+              :filterable-cell-operator="'contains'"
+              :filterable-cell-suggestion-operator="'contains'"
             ></kendo-grid-column>
             <kendo-grid-column
               :field="'created'"
@@ -182,8 +170,8 @@ import $ from "jquery"
 import permission from '../../mixins/permission'
 import { mapGetters } from "vuex"
 import { API_URL } from "../../services/config"
-import Material from '../../models/Material'
-import MaterialService from "../../services/material.service"
+import Machine from '../../models/Machine'
+import MachineService from "../../services/machine.service"
 import ModalGrid from "../widgets/Modals/ModalGridSelected.vue"
 import ModalForm from '../../components/widgets/Modals/ModalForm.vue'
 
@@ -192,8 +180,6 @@ export default {
     return {
       url: API_URL,
       dsSchemaFields: {
-        name: { type: "string" },
-        unity: { type: "string" },
         description: { type: "string" },
         created: { type: "date", format: "{0:dd/MM/yyyy}" },
         updated: { type: "date", format: "{0:dd/MM/yyyy}" },
@@ -220,55 +206,17 @@ export default {
       visibleModal: false,
       visibleForm: false,
       success: false,
-      material: new Material(),
-      units: [
-        { label: 'amarro', value: 'amarro'},
-        { label: 'barra', value: 'barra'},
-        { label: 'bolsa', value: 'bolsa'},
-        { label: 'caja', value: 'caja'},
-        { label: 'cajón', value: 'cajón'},
-        { label: 'carga', value: 'carga'},
-        { label: 'dm³', value: 'dm³'},
-        { label: 'fajo', value: 'fajo'},
-        { label: 'fardo', value: 'fardo'},
-        { label: 'g', value: 'g'},
-        { label: 'galón', value: 'galón'},
-        { label: 'glb', value: 'glb'},
-        { label: 'ha', value: 'ha'},
-        { label: 'juego', value: 'juego'},
-        { label: 'kg', value: 'kg'},
-        { label: 'l', value: 'l'},
-        { label: 'lata', value: 'lata'},
-        { label: 'lb', value: 'lb'},
-        { label: 'm', value: 'm'},
-        { label: 'm²', value: 'm²'},
-        { label: 'm³', value: 'm³'},
-        { label: 'mm', value: 'mm'},
-        { label: 'perfil', value: 'perfil'},
-        { label: 'pie', value: 'pie'},
-        { label: 'pie²', value: 'pie²'},
-        { label: 'placa', value: 'placa'},
-        { label: 'plomo', value: 'plomo'},
-        { label: 'pqte', value: 'pqte'},
-        { label: 'pto', value: 'plomo'},
-        { label: 'pza', value: 'pza'},
-        { label: 'resma', value: 'resma'},
-        { label: 'rollo', value: 'rollo'},
-        { label: 't', value: 't'},
-        { label: 'tubo', value: 'tubo'},
-        { label: 'turril', value: 'turril'},
-        { label: 'unds', value: 'unds'},
-      ],
+      machine: new Machine(),
     }
   },
 
   computed: {
-    ...mapGetters(["itemsMaterial"]),
+    ...mapGetters(["itemsMachine"]),
     addSubtitle () {
-      if(this.material.id) {
-        return 'Editar Material'
+      if(this.machine.id) {
+        return 'Editar Máquina'
       }
-      return 'Registrar Material'
+      return 'Registrar Máquina'
     }
   },
 
@@ -280,7 +228,7 @@ export default {
   mixins: [permission],
 
   mounted() {
-    let grid = this.$refs.grid.kendoWidget()
+    let grid = this.$refs.grid_machine.kendoWidget()
     let ds = []
     for (let i = 1, max = grid.columns.length; i < max; i++) {
       if (grid.columns[i].field) {
@@ -333,25 +281,25 @@ export default {
   methods: {
     closeModalForm() {
       this.visibleForm = false
-      this.material = new Material()
+      this.machine = new Machine()
     },
 
     update(ev) {
       ev.preventDefault()
-      let gridWidget = this.$refs.grid.kendoWidget()
+      let gridWidget = this.$refs.grid_machine.kendoWidget()
       let tr = $(ev.target).closest('tr')
       let data = gridWidget.dataItem(tr)
       let {created, updated, parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = data
-      this.material = obj
+      this.machine = obj
       this.visibleForm = true
     },
 
     async deleted() {
-      let data = this.itemsMaterial.map(item => item.id)
-      const response = await MaterialService.deleteMaterial(data)
+      let data = this.itemsMachine.map(item => item.id)
+      const response = await MachineService.deleteMachine(data)
       if (response.status === 200) {
-        this.$store.dispatch("emptyMaterial")
-        this.$refs.grid.kendoWidget().dataSource.read()
+        this.$store.dispatch("emptyMachine")
+        this.$refs.grid_machine.kendoWidget().dataSource.read()
         this.visibleModal = false
         this.$bus.$emit('success')
         this.$message.success(response.data.message)
@@ -372,7 +320,7 @@ export default {
       xhr.setRequestHeader("Accept-Language", "en")
       xhr.setRequestHeader("Accept", "application/json")
       xhr.done(function(data) {
-        self.$emit("material", false)
+        self.$emit("machine", false)
       })
       xhr.fail(function(data) {
         if (data.status === 403) self.$router.push({ path: '/system/403' })
@@ -408,9 +356,9 @@ export default {
     },
 
     emptyGridSelected() {
-      this.$store.dispatch("emptyMaterial")
+      this.$store.dispatch("emptyMachine")
       .then(() => {
-        let grid = this.$refs.grid.kendoWidget()
+        let grid = this.$refs.grid_machine.kendoWidget()
         grid.clearSelection()
       })
     },
@@ -421,14 +369,14 @@ export default {
       let items = grid.items()
       items.each(function(idx, row) {
         let idValue = grid.dataItem(row).get("id")
-        let index = vm.itemsMaterial.findIndex(x => x.id == idValue)
+        let index = vm.itemsMachine.findIndex(x => x.id == idValue)
         if (row.className.indexOf("k-state-selected") >= 0) {
           let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem(row)
           obj.created = kendo.toString(obj.created, "dd/MM/yyyy")
           obj.updated = kendo.toString(obj.updated, "dd/MM/yyyy")
-          vm.$store.dispatch("setItemMaterial", obj)
+          vm.$store.dispatch("setItemMachine", obj)
         } else if (index > -1) {
-          vm.$store.dispatch("deleteItemMaterial", index)
+          vm.$store.dispatch("deleteItemMachine", index)
         }
       })
     },
@@ -440,7 +388,7 @@ export default {
       let itemsToSelect = []
       items.each(function(idx, row) {
         let dataItem = grid.dataItem(row).get("id")
-        let index = vm.itemsMaterial.some(item => item.id === dataItem)
+        let index = vm.itemsMachine.some(item => item.id === dataItem)
         if (index) {
           itemsToSelect.push(row)
         }
@@ -453,13 +401,13 @@ export default {
       this.success = true
       this.$validator.errors.clear()
       try {
-        if(this.material.id) {
-          this._save = await MaterialService.updateMaterial(this.material.id, this.material)
+        if(this.machine.id) {
+          this._save = await MachineService.updateMachine(this.machine.id, this.machine)
         } else {
-          this._save = await MaterialService.storeMaterial(this.material)
+          this._save = await MachineService.storeMachine(this.machine)
         }
         if (this._save.status === 201 || this._save.status === 200) {
-          this.$refs.grid.kendoWidget().dataSource.read()
+          this.$refs.grid_machine.kendoWidget().dataSource.read()
           this.$message.success(this._save.data.message)
           this.success = false
           this.closeModalForm()
