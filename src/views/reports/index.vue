@@ -11,7 +11,6 @@
             <v-select 
               v-model="report"
               :clearable= "false"
-              :reduce="state => state.value"
               :options="reports"
             >
               <template slot="option" slot-scope="option">
@@ -22,7 +21,7 @@
             </v-select>
           </div>
           <div class="d-table-cell align-middle">
-            <b-button :disabled="report === null ? true : false" @click="getReport" class="ml-1 btn-add" size="sm">
+            <b-button :disabled="report === null ? true : false" @click="getReport" class="ml-1" size="sm" style="height: 2.5em;">
               <i class="fa fa-search"></i>
             </b-button>
           </div>
@@ -53,7 +52,7 @@
                 @search="onSearchCustomer"
                 placeholder="Cliente.."
               >
-                <template slot="no-options">Buscar clientes..</template>
+                <template slot="no-options">Buscar Cliente</template>
                 <template slot="option" slot-scope="customer">
                   <div>
                     <strong>{{ customer.business_name }}</strong>
@@ -81,9 +80,9 @@
         </fieldset>
       </div>
       <div class="d-flex justify-content-end pt-2"><div><strong>Total {{ items.length }} ítems</strong></div></div>
-      <!-- <div class="row mt-2">
+      <div v-if="items.length > 0" class="row mt-2">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-          <div v-if="items.length > 0" class="p-2" style="background-color: #e8e8e8;">
+          <div  class="p-2" style="background-color: #e8e8e8;">
             <b-button @click="downloadPdf" title="Descargar PDF" variant="danger" class="mr-2">
               <i class="fa fa-file-pdf-o"></i>
             </b-button>
@@ -91,36 +90,35 @@
               <i class="fa fa-file-excel-o"></i>
             </b-button>
           </div>
-          <b-table class="text-center" thead-class="bg-danger text-white" small fixed striped hover responsive="sm" stacked="sm" show-empty :items="items">
-            <template v-slot:empty="scope">
-              <div class="text-center">
-                <i class="fa fa-search-minus fa-3x" aria-hidden="true"></i>
-                <h6>No existen resultados</h6>
-              </div>
-            </template>
-          </b-table>
-          <div class="container text-center">
-            <div class="row border border-dark">
-              <div class="col-md-2 ml-auto border">
-                <div class="h5 font-weight-bold pt-2">TOTAL (BS)&nbsp:</div>
-              </div>
-              <div class="col-md-2 border" style="background: #4e4e4e;">
-                <div class="text-white h6 font-weight-bold pt-2">{{ subTotal | currency }}</div>
-              </div>
-              <div v-if="report === 'reports/total_quotations'" class="col-md-2 border" style="background: #4e4e4e;">
-                <div class="text-white h6 font-weight-bold pt-2">{{ subTotalCancelado | currency }}</div>
-              </div>
-              <div v-if="report === 'reports/total_quotations'" class="col-md-2 border" style="background: #4e4e4e;">
-                <div class="text-white h6 font-weight-bold pt-2">{{ subTotalSaldo | currency }}</div>
+          <div v-if="report.type == 1">
+            <b-table class="text-center" thead-class="bg-danger text-white" small fixed striped hover responsive="sm" stacked="sm" show-empty :items="items">
+            </b-table>
+            <div class="container text-center">
+              <div class="row border border-dark">
+                <div class="col-md-2 ml-auto border">
+                  <div class="h5 font-weight-bold pt-2">TOTAL (BS)&nbsp:</div>
+                </div>
+                <div class="col-md-2 border" style="background: #4e4e4e;">
+                  <div class="text-white h6 font-weight-bold pt-2">{{ subTotal | currency }}</div>
+                </div>
+                <div v-if="report.value === 'reports/total_quotations'" class="col-md-2 border" style="background: #4e4e4e;">
+                  <div class="text-white h6 font-weight-bold pt-2">{{ subTotalCancelado | currency }}</div>
+                </div>
+                <div v-if="report.value === 'reports/total_quotations'" class="col-md-2 border" style="background: #4e4e4e;">
+                  <div class="text-white h6 font-weight-bold pt-2">{{ subTotalSaldo | currency }}</div>
+                </div>
               </div>
             </div>
           </div>
+          <table-account-customer v-if="report.type == 2" :items="items"></table-account-customer>
         </div>
-      </div> -->
-      <b-button @click="test" title="Descargar PDF" variant="danger" class="mr-2">
-        <i class="fa fa-file-pdf-o"></i>
-      </b-button>
-      <table-account-customer :items="items"></table-account-customer>
+      </div>
+      <div v-else class="d-flex justify-content-center" style="background-color: #e8e8e8;">
+        <div class="text-center p-2">
+          <i class="fa fa-search-minus fa-3x" aria-hidden="true"></i>
+          <h6>Sin Datos Disponibles</h6>
+        </div>
+      </div>
     </a-spin>
   </div>
 </template>
@@ -146,12 +144,13 @@
         moment,
         report: null,
         reports: [
-          { label: 'Total Importe Cotizaciones', value: 'reports/total_quotations'},
-          { label: 'Reporte de Facturación', value: 'reports/invoice_report'},
-          { label: 'Lista Cotizaciones Emitidas (General)', value: 'reports/quotation_general'},
-          { label: 'Lista Cotizaciones Emitidas (Pendientes)', value: 'reports/quotation_pending'},
-          { label: 'Lista Cotizaciones Emitidas (Aprobadas)', value: 'reports/quotation_approved'},
-          { label: 'Lista Cotizaciones Emitidas (Ejecutadas)', value: 'reports/quotation_executed'},
+          { label: 'Total Importe Cotizaciones', value: 'reports/total_quotations', type: 1 },
+          { label: 'Reporte de Facturación', value: 'reports/invoice_report', type: 1 },
+          { label: 'Estado de Cuentas (Clientes)', value: 'reports/get_accounts', type: 2},
+          { label: 'Lista Cotizaciones Emitidas (General)', value: 'reports/quotation_general', type: 1 },
+          { label: 'Lista Cotizaciones Emitidas (Pendientes)', value: 'reports/quotation_pending', type: 1 },
+          { label: 'Lista Cotizaciones Emitidas (Aprobadas)', value: 'reports/quotation_approved', type: 1 },
+          { label: 'Lista Cotizaciones Emitidas (Ejecutadas)', value: 'reports/quotation_executed', type: 1 },
         ],
         items: [],
         office: null,
@@ -167,6 +166,12 @@
 
     components: {
       'table-account-customer': TableAccountCustomer
+    },
+
+    watch: {
+      report() {
+        this.items = []
+      }
     },
 
     computed: {
@@ -247,12 +252,12 @@
           if (response.status === 200) {
             // console.log(response)
             this.items = response.data.data
-            console.log(this.items)
+            // console.log(this.items)
             // this.loading = false
           }
         } catch (err) {
           this.loading = false
-          console.log(err)
+          // console.log(err)
         }
       },
 
@@ -261,7 +266,7 @@
         try {
           let config = {
             method: 'post',
-            url: this.report,
+            url: this.report.value,
             data: {
               initial_date: moment(this.date[0]).format('YYYY-MM-DD'),
               final_date: moment(this.date[1]).format('YYYY-MM-DD'),
@@ -278,28 +283,38 @@
           }
         } catch (err) {
           this.loading = false
-          console.log(err)
+          // console.log(err)
         }
       },
 
       async downloadPdf() {
         try {
           this.loading = true
-          let title = this.reports.filter(obj => obj.value === this.report)
-          let date = {
-            initial_date: moment(this.date[0]).format('YYYY-MM-DD'),
-            final_date: moment(this.date[1]).format('YYYY-MM-DD'),
-          }
+
           let items = this.items.map(obj => {
             let rObj = Object.assign({}, obj)
-            rObj.monto = Number(this.toFloat(rObj.monto))
-            if (rObj.cancelado && rObj.saldo) {
-              rObj.cancelado = Number(this.toFloat(rObj.cancelado))
-              rObj.saldo = Number(this.toFloat(rObj.saldo))
+            if (this.report.type === 1) { 
+              rObj.monto = Number(this.toFloat(rObj.monto))
+              if (rObj.cancelado && rObj.saldo) {
+                rObj.cancelado = Number(this.toFloat(rObj.cancelado))
+                rObj.saldo = Number(this.toFloat(rObj.saldo))
+              }
+              return rObj
             }
             return rObj
           })
-          const response = await ReportService.downloadPdf({data: items, title: title[0].label, date: date})
+        
+          const data = { 
+            title: this.reports.filter(obj => obj.value === this.report.value)[0].label, 
+            ... this.office && { office: this.offices.filter(obj => obj.id === this.office)[0].description }, 
+            ... this.customer && { customer: this.customer.business_name },
+            ... this.report.type === 1 && { columns: Object.keys(items[0]) },
+            date: { initial_date: moment(this.date[0]).format('YYYY-MM-DD'), final_date: moment(this.date[1]).format('YYYY-MM-DD') },
+            type: this.report.type,
+            items: items
+          };
+
+          const response = await ReportService.downloadPdf({data: data})
           if (response.status === 200) {
             let blob = new Blob([response.data])
             let link = document.createElement("a")
@@ -335,10 +350,6 @@
 <style scoped>
 >>> .ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled) {
     border-color: #9e0207;
-}
-
-.btn-add {
-  height: 2.5em;
 }
 
 fieldset {

@@ -5,7 +5,7 @@
         <tr>
           <th width="50px">Fecha</th>
           <th width="40px">Compr</th>
-          <th width="50px">Num</th>
+          <th width="50px">Num/Op</th>
           <th width="350px">Detalle</th>
           <th width="100px">Debe</th>
           <th width="80px">Haber</th>
@@ -19,17 +19,17 @@
             <td>{{ item.type }}</td>
             <td>{{ item.number }}</td>
             <td>{{ item.summary }}</td>
-            <td>{{ item.total }}</td>
+            <td>{{ item.total | currency }}</td>
             <td></td>
-            <td>{{ item.total }}</td>
+            <td>{{ item.total | currency }}</td>
           </tr>
           <tr v-for="(payment, index) in item.payments" :key="item.id+index" style="background-color: #f9f3f3;">
             <td>{{ payment.date | formatDate('DD/MM/YYYY') }}</td>
             <td>{{ payment.type }}</td>
-            <td>01</td>
-            <td>asas</td>
+            <td>{{ payment.code }}</td>
+            <td>{{ payment.summary }}</td>
             <td></td>
-            <td>{{ payment.amount }}</td>
+            <td>{{ payment.amount | currency }}</td>
             <td></td>
           </tr>
           <tr :key="'total'+item.id+index" style="background-color: #dddddd;">
@@ -37,119 +37,16 @@
               TOTAL
             </td>
             <td></td>
-            <td>ssdsd</td>
+            <td>{{ subTotal(item.payments) | currency }}</td>
             <td></td>
           </tr>
         </template>
-        <!-- <tr style="background-color: #fff1d1;">
-          <td>13/02/2021</td>
-          <td>
-            Factura
-          </td>
-          <td>
-            12
-          </td>
-          <td>
-            Alq. Publi Av. Cristo Redentor Cara A-B del 01/02/2020 al 01/03/2021
-          </td>
-          <td>
-            8,120.00
-          </td>
-          <td></td>
-          <td>8,120.00</td>
+        <tr style="background: #5e6267; color: #fff;">
+          <td colspan="4"></td>
+          <td>{{ totalInvoices | currency }}</td>
+          <td>{{ totalPayments | currency }}</td>
+          <td>{{ grandTotal | currency }}</td>
         </tr>
-        <tr style="background-color: #efefef;">
-          <td>15/02/2021</td>
-          <td>
-            Cheque
-          </td>
-          <td>
-            001
-          </td>
-          <td>
-            Pagado en deposito
-          </td>
-          <td></td>
-          <td>8,000.00</td>
-          <td></td>
-        </tr>
-        <tr style="background-color: #efefef;">
-          <td>15/02/2021</td>
-          <td>
-            Cheque
-          </td>
-          <td>
-            001
-          </td>
-          <td>
-            Pagado en deposito
-          </td>
-          <td></td>
-          <td>120.00</td>
-          <td></td>
-        </tr>
-        <tr style="background-color: #c5d7ff;">
-          <td colspan="4" style="text-align: right;">
-            TOTAL
-          </td>
-          <td></td>
-          <td>8,120.00</td>
-          <td>0.00</td>
-        </tr>
-        <tr style="background-color: #fff1d1;">
-          <td>13/02/2021</td>
-          <td>
-            Factura
-          </td>
-          <td>
-            12
-          </td>
-          <td>
-            Alq. Publi Av. Cristo Redentor Cara A-B del 01/02/2020 al 01/03/2021
-          </td>
-          <td>
-            8,120.00
-          </td>
-          <td></td>
-          <td>8,120.00</td>
-        </tr>
-        <tr style="background-color: #efefef;">
-          <td>15/02/2021</td>
-          <td>
-            Cheque
-          </td>
-          <td>
-            001
-          </td>
-          <td>
-            Pagado en deposito
-          </td>
-          <td></td>
-          <td>8,000.00</td>
-          <td></td>
-        </tr>
-        <tr style="background-color: #efefef;">
-          <td>15/02/2021</td>
-          <td>
-            Cheque
-          </td>
-          <td>
-            001
-          </td>
-          <td>
-          </td>
-          <td></td>
-          <td>120.00</td>
-          <td></td>
-        </tr>
-        <tr style="background-color: #c5d7ff;">
-          <td colspan="4" style="text-align: right;">
-            TOTAL
-          </td>
-          <td></td>
-          <td>8,120.00</td>
-          <td>0.00</td>
-        </tr> -->
       </tbody>
     </table>
   </vue-custom-scrollbar>
@@ -157,6 +54,7 @@
 
 <script>
 import vueCustomScrollbar from 'vue-custom-scrollbar'
+import formatter from '../../../mixins/formatter'
 
 export default {
   props: {
@@ -175,8 +73,44 @@ export default {
     }
   },
 
+  computed: {
+    totalPayments() {
+      let items = this.items.map(item => item.payments).flat()
+      let total = items.reduce((acc, item) => {
+        return acc + Number(this.toFloat(item.amount))
+      }, 0)
+
+      return isNaN(total) ? 0 : total
+    },
+
+    totalInvoices() {
+      let total = this.items.reduce((acc, item) => {
+        return acc + Number(this.toFloat(item.total))
+      }, 0)
+
+      return isNaN(total) ? 0 : total
+    },
+
+    grandTotal() {
+      let total = (this.totalInvoices - this.totalPayments)
+      return total
+    }
+  },
+
+  mixins: [formatter],
+
   components: {
     vueCustomScrollbar
+  },
+
+  methods: {
+    subTotal(payments) {
+      let total = payments.reduce((acc, item) => {
+        return acc + Number(this.toFloat(item.amount))
+      }, 0)
+
+      return isNaN(total) ? 0 : total
+    },
   },
 }
 </script>

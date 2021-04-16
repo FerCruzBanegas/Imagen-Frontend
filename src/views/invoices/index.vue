@@ -28,7 +28,7 @@
                   ></v-select>
                 </div>
                 <div class="d-table-cell align-middle">
-                  <b-button @click="searchInvoice" variant="danger" class="ml-1 btn-add" size="sm">
+                  <b-button @click="searchInvoice" variant="danger" class="ml-1" size="sm" style="height: 2.5em;">
                     <i class="fa fa-search"></i>
                   </b-button>
                 </div>
@@ -112,10 +112,6 @@
 
 >>> .ant-input:hover {
   border-color:#9e0207;
-}
-
-.btn-add {
-  height: 2.5em;
 }
 
 fieldset {

@@ -82,13 +82,31 @@
               <div class="container">
                 <form>
                   <div class="form-group row">
-                    <strong><label for="inputPassword" class="col-form-label">OP:</label></strong>
+                    <strong><label for="op" class="col-form-label">OP:</label></strong>
                     <div class="col-sm-2">
-                      <input type="password" class="form-control" id="inputPassword">
+                      <b-form-group :invalid-feedback="errors.first('op')" :state="!errors.has('op')">
+                        <b-form-input 
+                          v-model="payment.op"
+                          :state="errors.has('op') ? false : null"
+                          v-validate="'max:32'"
+                          data-vv-name="op"
+                          data-vv-as="op"
+                          type="text"
+                        ></b-form-input>
+                      </b-form-group>
                     </div>
-                    <strong><label for="inputPassword" class="col-form-label">Número:</label></strong>
+                    <strong><label for="number" class="col-form-label">Número:</label></strong>
                     <div class="col-sm-2">
-                      <input type="password" class="form-control" id="inputPassword">
+                      <b-form-group :invalid-feedback="errors.first('number')" :state="!errors.has('number')">
+                        <b-form-input 
+                          v-model="payment.number"
+                          :state="errors.has('number') ? false : null"
+                          v-validate="'max:32'"
+                          data-vv-name="number"
+                          data-vv-as="número"
+                          type="text"
+                        ></b-form-input>
+                      </b-form-group>
                     </div>
                   </div>
                 </form>
@@ -100,7 +118,7 @@
                     <b-form-input 
                       v-model="payment.date"
                       :state="errors.has('date') ? false : null"
-                      v-validate="'required'"
+                      v-validate="'max:32'"
                       data-vv-name="date"
                       data-vv-as="fecha"
                       type="date"
@@ -463,6 +481,7 @@ export default {
         'item',
         { key: 'date', label: 'Fecha'},
         { key: 'type', label: 'Comprobante'},
+        { key: 'code', label: 'Op/Num'},
         { key: 'path', label: 'Imagen'},
         { key: 'amount', label: 'Monto'},
       ],
@@ -671,42 +690,6 @@ export default {
 		// 	return array;
 		// },
 
-    getPdf(pdfAsArray) {
-      let data
-      // PDFJS.getDocument(pdfAsArray).then(function (pdf) {
-      //   getPage();
-      //   function getPage() {
-      //     pdf.getPage(1).then(function(page) {
-      //         var viewport = page.getViewport(1.5);
-      //         var canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
-      //         var renderContext = { canvasContext: ctx, viewport: viewport };
-
-      //         canvas.height = viewport.height;
-      //         canvas.width = viewport.width;
-      //         data = canvas.toDataURL()
-      //     })
-      //   }
-      // })
-      
-      PDFJS.getDocument(pdfAsArray).promise.then(pdf => {
-        console.log(pdf)
-      });
-      // loadingTask.promise.then(pdf => {
-      //   pdf.getPage(1).then(function(page) {
-      //       let viewport = page.getViewport(1.5);
-      //       let canvas = document.createElement('canvas') , ctx = canvas.getContext('2d');
-      //       let renderContext = { canvasContext: ctx, viewport: viewport };
-
-      //       canvas.height = viewport.height;
-      //       canvas.width = viewport.width;
-      //       data = canvas.toDataURL()
-      //       console.log(canvas.toDataURL())
-      //   })
-      //   // console.log(pdf)
-      // });
-      // return data
-    },
-
     editPayment(row) {
       let {parent, _events, _handlers, uid,...obj} = row.item
       this.payment = obj
@@ -747,17 +730,16 @@ export default {
       this.$validator.errors.clear()
       this.loading = true
       try {
-        // this.payment['model'] = this.model
-        // this.payment['type_id'] = this.type_id
         let payment = {
           date: this.payment['date'],
           type: this.payment['type'],
+          op: this.payment['op'],
+          number: this.payment['number'],
           path: this.payment['path'],
           amount: Number(this.toFloat(this.payment['amount'])),
           model: this.model,
           type_id: this.type_id,
         }
-        // this.payment.amount = Number(this.toFloat(this.payment.amount))
         if(this.payment.id) {
           this._save = await PaymentService.updatePayment(this.payment.id, payment)
         } else {

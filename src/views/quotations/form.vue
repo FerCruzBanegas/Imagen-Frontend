@@ -65,7 +65,7 @@
                 </v-select>
               </div>
               <div class="d-table-cell align-middle">
-                <b-button @click="showModal" class="ml-1 btn-add" size="sm">
+                <b-button @click="showModal" class="ml-1" size="sm" style="height: 2.4em;">
                   <i class="fa fa-user-plus"></i>
                 </b-button>
               </div>
@@ -199,12 +199,12 @@
                 </v-select>
               </div>
               <div class="d-table-cell align-middle">
-                <b-button @click="addProduct" class="ml-1 btn-add" size="sm">
+                <b-button @click="addProduct" class="ml-1" size="sm" style="height: 2.4em;">
                   <i class="fa fa-plus-circle"></i>
                 </b-button>
               </div>
               <div class="d-table-cell align-middle" v-if="id">
-                <b-button @click="getShowQuotation" variant="danger" class="ml-1 btn-add" size="sm">
+                <b-button @click="getShowQuotation" variant="danger" class="ml-1" size="sm" style="height: 2.4em;">
                   <i class="fa fa-refresh"></i>
                 </b-button>
               </div>

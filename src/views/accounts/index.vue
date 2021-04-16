@@ -51,7 +51,7 @@
                   ></v-select>
                 </div>
                 <div class="d-table-cell align-middle">
-                  <b-button @click="searchAccounts" variant="danger" class="ml-1 btn-add" size="sm">
+                  <b-button @click="searchAccounts" variant="danger" class="ml-1" size="sm" style="height: 2.5em;">
                     <i class="fa fa-search"></i>
                   </b-button>
                 </div>
@@ -97,11 +97,11 @@
                     label="description"
                     :options="offices"
                     :reduce="office => office.id"
-                    placeholder="Seleccione la sucursal"
+                    placeholder="Sucursal"
                   ></v-select>
                 </div>
                 <div class="d-table-cell align-middle">
-                  <b-button @click="searchAccounts" variant="danger" class="ml-1 btn-add" size="sm">
+                  <b-button @click="searchAccounts" variant="danger" class="ml-1" size="sm" style="height: 2.5em;">
                     <i class="fa fa-search"></i>
                   </b-button>
                 </div>
@@ -242,10 +242,6 @@
 
 >>> .ant-input:hover {
   border-color:#9e0207;
-}
-
-.btn-add {
-  height: 2.5em;
 }
 
 fieldset {

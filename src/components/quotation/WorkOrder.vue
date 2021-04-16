@@ -261,7 +261,7 @@
                   <td colspan="3">
                     <div>
                       <span v-for="(employee, index) in quotation.work_order.employees" :key="index">
-                        {{ employee.name }} {{ index+1 < quotation.work_order.employees.length ? ',' : '' }}
+                        {{ employee.name }}{{ index+1 < quotation.work_order.employees.length ? ',' : '' }}
                       </span>
                     </div>
                   </td>

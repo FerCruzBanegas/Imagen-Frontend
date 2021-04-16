@@ -22,13 +22,13 @@
         <div class="container">
           <div class="row">
             <div class="col-md-3">
-              <span class="font-weight-bold">Nº: {{ invoice.number }}</span>
+              <span class="font-weight-bold h3">Nº: {{ invoice.number }}</span>
             </div>
             <div class="col-md-6">
               <div class="text-center"><h1 class="font-weight-bold">FACTURA</h1></div>
             </div>
           </div>
-          <small class="float-right font-weight-bold"><i class="fa fa-exclamation-circle fa-lg" style="color:red"></i> Solo podrá editar la fecha y datos del detalle en la factura emitida.</small>
+          <small class="float-right font-weight-bold"><i class="fa fa-exclamation-circle fa-lg" style="color:#9e0207"></i> Solo podrá editar la fecha y datos del detalle en la factura emitida.</small>
           <fieldset class="fieldset col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
             <legend class="legend">Datos Generales:</legend>
             <div class="container">
@@ -70,7 +70,29 @@
               <div class="row">
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                   <div class="font-weight-bold pt-2 list">Cliente:</div>
-                  <p>{{ invoice.customer_data.business_name }}</p>
+                  <p>{{ invoice.customer_data.business_name }}
+                    <input v-model="checkNitName" type="checkbox" id="set_image_support" class="k-checkbox ml-2" checked="checked">
+                    <label style="margin-bottom: 0;" for="set_image_support" class="p-2 font-weight-bold">Cambiar Razón Social</label>
+                    <i v-b-popover.hover.top="'Para agregar o cambiar la razón social, marque la casilla.'" title="Nota" class="fa fa-question-circle fa-lg" style="color:#1a1c1f"></i>
+                    <b-form-group v-if="checkNitName" label-for="invoice.nit_name" :invalid-feedback="errors.first('invoice.nit_name')" :state="!errors.has('invoice.nit_name')">
+                      <b-input-group>
+                        <b-form-input 
+                          v-model="invoice.nit_name"
+                          :state="errors.has('invoice.nit_name') ? false : null"
+                          v-validate="'min:3|max:120'"
+                          data-vv-name="invoice.nit_name"
+                          data-vv-as="nombre factura"
+                          type="text"
+                          placeholder="Señor(es)"
+                        ></b-form-input>
+                        <b-input-group-append>
+                          <b-input-group-text>
+                            <i @click=test class="close-icon fa fa-times-circle-o"></i>
+                          </b-input-group-text>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                  </p>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                   <div class=" font-weight-bold pt-2 list">NIT:</div>
@@ -264,6 +286,7 @@ export default {
       popoverEditInvoice: false,
       visibleInvoice: false,
       error: null,
+      checkNitName: false,
     }
   },
  
@@ -293,6 +316,10 @@ export default {
   },
 
   methods: {
+    test() {
+      this.invoice.nit_name = ''
+    },
+
     total(product) {
       return parseInt(product.quantity) * this.toFloat(product.price) 
     },
@@ -336,7 +363,7 @@ export default {
             license: response.data.data,
             products: this.invoice.products,
             customer_data: {
-              business_name: this.invoice.customer_data.business_name,
+              business_name: this.invoice.nit_name && this.invoice.nit_name != this.invoice.customer_data.business_name ? this.invoice.nit_name : this.invoice.customer_data.business_name,
               nit: this.invoice.customer_data.nit
             }
           }
@@ -354,6 +381,7 @@ export default {
       
       let invoice = {
         date: this.invoice.date,
+        nit_name: this.invoice.nit_name,
         title: this.invoice.title,
         footer: this.invoice.footer,
         details: this.invoice.details.map(obj => obj.description).join('|'),
@@ -386,12 +414,16 @@ export default {
 
     onClose() {
       this.error = null
+      this.checkNitName = false
       this.$emit("hide")
     }
   }
 }
 </script>
 <style scoped>
+.close-icon { transition: all .2s ease-in-out; font-size: 20px; cursor: pointer; }
+.close-icon:hover { transform: scale(1.1); }
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .1s
 }
