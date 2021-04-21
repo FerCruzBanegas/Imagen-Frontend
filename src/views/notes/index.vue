@@ -101,19 +101,8 @@
     }
   }
 </script>
+<style scoped src="../../assets/css/date.css"></style>
 <style scoped>
->>> .ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled) {
-    border-color: #9e0207;
-}
-
->>> .ant-input:focus {
-  border-color:#9e0207;
-}
-
->>> .ant-input:hover {
-  border-color:#9e0207;
-}
-
 fieldset {
   background-color: #f6f6f6;
   border-radius: 4px;

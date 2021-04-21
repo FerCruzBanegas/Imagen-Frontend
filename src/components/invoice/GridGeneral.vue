@@ -39,9 +39,9 @@
                 <i class="fa fa-file-excel-o"></i>
                 <span v-if="itemsInvoice.length > 0">({{ itemsInvoice.length }})</span>
               </b-button>
-              <b-button title="Descargar TXT" variant="primary" class="ml-2">
+              <!-- <b-button title="Descargar TXT" variant="primary" class="ml-2">
                 <i class="fa fa-file-text-o"></i>
-              </b-button>
+              </b-button> -->
               <b-button title="Actualizar Tabla" @click="reloadTable" variant="dark" class="ml-2">
                 <i class="fa fa-repeat"></i>
               </b-button>

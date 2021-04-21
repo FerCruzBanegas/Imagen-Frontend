@@ -1,0 +1,12 @@
+>>> .ant-calendar-picker {
+  width: 100%;
+}
+
+>>> .ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled) {
+  border-color: rgba(60, 60, 60, 0.26);
+}
+
+>>> .ant-calendar-picker:focus .ant-calendar-picker-input:not(.ant-input-disabled) {
+  border-color: rgba(60, 60, 60, 0.26);
+  box-shadow: 0 0 0 0;
+}
