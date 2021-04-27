@@ -19,109 +19,110 @@
       @hide="visibleQuestion = !visibleQuestion"
       @submit="cancelInvoice"
     ></modal-question>
-    <div class="row justify-content-center">
+    <div class="row">
       <div class="table-responsive">
-        <div class="container">
-          <div class="row p-2 bg-secondary">
-            <div class="col-md-6">
-              <b-button @click="visibleModal = true" v-if="itemsInvoice.length > 0" squared variant="outline-danger" class="mr-2">
-                <i class="fa fa-check-square"></i>
-                ({{ itemsInvoice.length }}) Seleccionados
-              </b-button>
-              <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
-                <i class="fa fa-check-square-o"></i>
-              </b-button>
-              <b-button title="Descargar PDF" @click="pdfListInvoice" variant="danger" class="ml-2">
-                <i class="fa fa-file-pdf-o"></i>
-                <span v-if="itemsInvoice.length > 0">({{ itemsInvoice.length }})</span>
-              </b-button>
-              <b-button title="Descargar EXCEL" @click="excelListInvoice" variant="success" class="ml-2">
-                <i class="fa fa-file-excel-o"></i>
-                <span v-if="itemsInvoice.length > 0">({{ itemsInvoice.length }})</span>
-              </b-button>
-              <!-- <b-button title="Descargar TXT" variant="primary" class="ml-2">
-                <i class="fa fa-file-text-o"></i>
-              </b-button> -->
-              <b-button title="Actualizar Tabla" @click="reloadTable" variant="dark" class="ml-2">
-                <i class="fa fa-repeat"></i>
-              </b-button>
-            </div>
-            <div class="col-md-2 ml-auto">
-              <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
-              </div>
-            </div>
+        <div class="d-flex flex-sm-row flex-column bg-secondary">
+          <div class="mr-auto p-2">
+            <b-button @click="visibleModal = true" v-if="itemsInvoice.length > 0" squared variant="outline-danger" class="mr-2">
+              <i class="fa fa-check-square"></i>
+              ({{ itemsInvoice.length }}) Seleccionados
+            </b-button>
+            <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
+              <i class="fa fa-check-square-o"></i>
+            </b-button>
+            <b-button title="Descargar PDF" @click="pdfListInvoice" variant="danger" class="ml-2">
+              <i class="fa fa-file-pdf-o"></i>
+              <span v-if="itemsInvoice.length > 0">({{ itemsInvoice.length }})</span>
+            </b-button>
+            <b-button title="Descargar EXCEL" @click="excelListInvoice" variant="success" class="ml-2">
+              <i class="fa fa-file-excel-o"></i>
+              <span v-if="itemsInvoice.length > 0">({{ itemsInvoice.length }})</span>
+            </b-button>
           </div>
-          <kendo-datasource
-            ref="datasource1"
-            :schema-total="'meta.total'"
-            :schema-data="'data'"
-            :transport-read="{ url: `${url}/invoices`, beforeSend: readData }"
-            :transport-parameter-map="parameterMap"
-            :page-size="10"
-            :server-paging="true"
-            :server-filtering="true"
-            :server-sorting="true"
-            :schema-model-fields="dsSchemaFields"
-          ></kendo-datasource>
-          <kendo-grid
-            ref="grid"
-            :data-source-ref="'datasource1'"
-            :no-records="true"
-            :messages-no-records="'NO EXISTEN RESULTADOS'"
-            :groupable="true"
-            :filterable="filterableConfig"
-            :navigatable="true"
-            :pageable-always-visible="true"
-            :pageable-page-sizes="[10, 20, 50, 100]"
-            :pageable-button-count="3"
-            :pageable-responsive="true"
-            :pageable-refresh="true"
-            :sortable="true"
-            @change="onChange"
-            @databound="dataBound"
-          >
-            <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
-            <kendo-grid-column
-              :field="'number'"
-              :title="'NÚMERO'"
-              :width="150"
-              :template="templateNumber"
-              :filterable-cell-operator="'contains'"
-              :filterable-cell-suggestion-operator="'contains'"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :filterable="false"
-              :field="'date'"
-              :title="'FECHA'"
-              :width="100"
-              :format="'{0:dd/MM/yyyy}'"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'state'"
-              :title="'ESTADO'"
-              :width="150"
-              :template="templateState"
-              :filterable-cell-show-operators="false"
-              :filterable-cell-template="stateFilter"
-            ></kendo-grid-column>
-            <kendo-grid-column :template="templateTotal" :field="'total'" :title="'TOTAL'" :width="80" :filterable="false"></kendo-grid-column>
-            <kendo-grid-column
-              :field="'customer'"
-              :title="'CLIENTE'"
-              :width="260"
-              :filterable-cell-show-operators="false"
-              :filterable-cell-template="customerFilter"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :command="[{className: 'k-grid-edit', name: 'edit', text: '', iconClass: 'fa fa-edit', click: openModalEdit}]" 
-              :width="55"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :command="[{className: 'k-grid-anuled', name: 'anuled', text: '', iconClass: 'fa fa-ban', click: openModalDelete}]" 
-              :width="55"
-            ></kendo-grid-column>
-          </kendo-grid>
+          <div class="p-2">
+            <b-button title="Actualizar Tabla" @click="reloadTable" variant="dark" class="mr-2">
+              <i class="fa fa-repeat"></i> Recargar
+            </b-button>
+            <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
+          </div>
         </div>
+        <kendo-datasource
+          ref="data-invoice"
+          :schema-total="'meta.total'"
+          :schema-data="'data'"
+          :transport-read="{ url: `${url}/invoices`, beforeSend: readData }"
+          :transport-parameter-map="parameterMap"
+          :page-size="10"
+          :server-paging="true"
+          :server-filtering="true"
+          :server-sorting="true"
+          :schema-model-fields="dsSchemaFields"
+        ></kendo-datasource>
+        <kendo-grid
+          ref="gridInvoice"
+          :data-source-ref="'data-invoice'"
+          :no-records="true"
+          :messages-no-records="'NO EXISTEN RESULTADOS'"
+          :groupable="true"
+          :filterable="filterableConfig"
+          :navigatable="true"
+          :pageable-always-visible="true"
+          :pageable-page-sizes="[10, 20, 50, 100]"
+          :pageable-button-count="3"
+          :pageable-responsive="true"
+          :pageable-refresh="true"
+          :sortable="true"
+          :resizable="true"
+          @change="onChange"
+          @databound="dataBound"
+        >
+          <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
+          <kendo-grid-column
+            :field="'number'"
+            :title="'NÚMERO'"
+            :width="140"
+            :template="templateNumber"
+            :filterable-cell-operator="'contains'"
+            :filterable-cell-suggestion-operator="'contains'"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :filterable="false"
+            :field="'date'"
+            :title="'FECHA'"
+            :width="100"
+            :format="'{0:dd/MM/yyyy}'"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'nit_name'"
+            :title="'RAZÓN S.'"
+            :width="130"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'state'"
+            :title="'ESTADO'"
+            :width="150"
+            :template="templateState"
+            :filterable-cell-show-operators="false"
+            :filterable-cell-template="stateFilter"
+          ></kendo-grid-column>
+          <kendo-grid-column :template="templateTotal" :field="'total'" :title="'TOTAL'" :width="80" :filterable="false"></kendo-grid-column>
+          <kendo-grid-column
+            :field="'customer'"
+            :title="'CLIENTE'"
+            :width="240"
+            :filterable-cell-show-operators="false"
+            :filterable-cell-template="customerFilter"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :command="[{className: 'k-grid-edit', name: 'edit', text: '', iconClass: 'fa fa-edit', click: openModalEdit}]" 
+            :width="55"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :command="[{className: 'k-grid-anuled', name: 'anuled', text: '', iconClass: 'fa fa-ban', click: openModalDelete}]" 
+            :width="55"
+          ></kendo-grid-column>
+        </kendo-grid>
       </div>
     </div>
   </div>
@@ -145,6 +146,7 @@ export default {
       dsSchemaFields: {
         number: { type: "string" },
         date: { type: "date", format: "{0:dd/MM/yyyy}" },
+        nit_name: { type: "string" },
         state: { from: "state.title" },
         total: { type: "string" },
         customer: { from: "customer.name" },
@@ -213,12 +215,12 @@ export default {
           array.push(obj)
         }
       })
-      this.$refs.grid.kendoWidget().dataSource.filter(array)
+      this.$refs.gridInvoice.kendoWidget().dataSource.filter(array)
     })
   },
 
   mounted() {
-    let grid = this.$refs.grid.kendoWidget()
+    let grid = this.$refs.gridInvoice.kendoWidget()
     let ds = []
     for (let i = 1, max = grid.columns.length; i < max; i++) {
       if (grid.columns[i].field) {
@@ -270,7 +272,7 @@ export default {
 
   methods: {
     reloadTable() {
-      this.$refs.grid.kendoWidget().dataSource.filter({})
+      this.$refs.gridInvoice.kendoWidget().dataSource.filter({})
     },
 
     openModalEdit(ev) {
@@ -289,7 +291,7 @@ export default {
         const response = await InvoiceService.cancelInvoice(this.invoiceId)
         if (response.status === 200) {
           if(response.data.success == undefined) {
-            this.$refs.grid.kendoWidget().dataSource.read()
+            this.$refs.gridInvoice.kendoWidget().dataSource.read()
             this.loadingAlert = false
             this.visibleQuestion = false
             this.$message.success(response.data.message)
@@ -310,7 +312,7 @@ export default {
     },
 
     closeModalEditInvoice() {
-      this.$refs.grid.kendoWidget().dataSource.read()
+      this.$refs.gridInvoice.kendoWidget().dataSource.read()
       this.visibleEdit = false
     },
 
@@ -438,7 +440,7 @@ export default {
     emptyGridSelected() {
       this.$store.dispatch("emptyInvoice")
       .then(() => {
-        let grid = this.$refs.grid.kendoWidget()
+        let grid = this.$refs.gridInvoice.kendoWidget()
         grid.clearSelection()
       })
     },

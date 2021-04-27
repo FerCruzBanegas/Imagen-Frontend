@@ -1,92 +1,93 @@
 <template>
   <div class="container">
-    <div class="row justify-content-center">
+    <div class="row">
       <div class="table-responsive">
-        <div class="container">
-          <div class="row p-2 bg-secondary">
-            <div class="col-md-6">
-              <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
-                <i class="fa fa-check-square-o"></i>
-              </b-button>
-              <b-button title="Descargar PDF" @click="pdfListWorkOrder" variant="danger" class="ml-2">
-                <i class="fa fa-file-pdf-o"></i>
-                <span v-if="itemsWorkOrder.length > 0">({{ itemsWorkOrder.length }})</span>
-              </b-button>
-              <b-button title="Descargar EXCEL" @click="excelListWorkOrder" variant="success" class="ml-2">
-                <i class="fa fa-file-excel-o"></i>
-                <span v-if="itemsWorkOrder.length > 0">({{ itemsWorkOrder.length }})</span>
-              </b-button>
-            </div>
-            <div class="col-md-2 ml-auto">
-              <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
-              </div>
-            </div>
+        <div class="d-flex flex-sm-row flex-column bg-secondary">
+          <div class="mr-auto p-2">
+            <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
+              <i class="fa fa-check-square-o"></i>
+            </b-button>
+            <b-button title="Descargar PDF" @click="pdfListWorkOrder" variant="danger" class="ml-2">
+              <i class="fa fa-file-pdf-o"></i>
+              <span v-if="itemsWorkOrder.length > 0">({{ itemsWorkOrder.length }})</span>
+            </b-button>
+            <b-button title="Descargar EXCEL" @click="excelListWorkOrder" variant="success" class="ml-2">
+              <i class="fa fa-file-excel-o"></i>
+              <span v-if="itemsWorkOrder.length > 0">({{ itemsWorkOrder.length }})</span>
+            </b-button>
           </div>
-          <kendo-datasource
-            ref="datasource1"
-            :schema-total="'meta.total'"
-            :schema-data="'data'"
-            :transport-read="{ url: `${url}/workorders`, beforeSend: readData }"
-            :transport-parameter-map="parameterMap"
-            :page-size="10"
-            :server-paging="true"
-            :server-filtering="true"
-            :server-sorting="true"
-            :schema-model-fields="dsSchemaFields"
-          ></kendo-datasource>
-          <kendo-grid
-            ref="grid"
-            :data-source-ref="'datasource1'"
-            :no-records="true"
-            :messages-no-records="'NO EXISTEN RESULTADOS'"
-            :groupable="true"
-            :filterable="filterableConfig"
-            :navigatable="true"
-            :pageable-always-visible="true"
-            :pageable-page-sizes="[10, 20, 50, 100]"
-            :pageable-button-count="3"
-            :pageable-responsive="true"
-            :pageable-refresh="true"
-            :sortable="true"
-            @change="onChange"
-            @databound="dataBound"
-            :detailTemplate="itemTemplate"
-          >
-            <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
-            <kendo-grid-column
-              :field="'number'"
-              :title="'CÓDIGO'"
-              :width="120"
-              :template="templateNumber"
-              :filterable-cell-operator="'contains'"
-              :filterable-cell-suggestion-operator="'contains'"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'opening_date'"
-              :title="'APERTURA'"
-              :width="120"
-              :format="'{0:dd/MM/yyyy}'"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'quotation'"
-              :title="'COTIZACIÓN'"
-              :width="100"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'state'"
-              :title="'ESTADO'"
-              :width="150"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'tasks'"
-              :title="'TAREAS'"
-              :width="50"
-              :filterable="false"
-            ></kendo-grid-column>
-          </kendo-grid>
+          <div class="p-2">
+            <b-button title="Actualizar Tabla" @click="reloadTable" variant="dark" class="mr-2">
+              <i class="fa fa-repeat"></i> Recargar
+            </b-button>
+            <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
+          </div>
         </div>
+        <kendo-datasource
+          ref="data-work-order"
+          :schema-total="'meta.total'"
+          :schema-data="'data'"
+          :transport-read="{ url: `${url}/workorders`, beforeSend: readData }"
+          :transport-parameter-map="parameterMap"
+          :page-size="10"
+          :server-paging="true"
+          :server-filtering="true"
+          :server-sorting="true"
+          :schema-model-fields="dsSchemaFields"
+        ></kendo-datasource>
+        <kendo-grid
+          ref="gridWorkOrder"
+          :data-source-ref="'data-work-order'"
+          :no-records="true"
+          :messages-no-records="'NO EXISTEN RESULTADOS'"
+          :groupable="true"
+          :filterable="filterableConfig"
+          :navigatable="true"
+          :pageable-always-visible="true"
+          :pageable-page-sizes="[10, 20, 50, 100]"
+          :pageable-button-count="3"
+          :pageable-responsive="true"
+          :pageable-refresh="true"
+          :sortable="true"
+          :resizable="true"
+          @change="onChange"
+          @databound="dataBound"
+          :detailTemplate="itemTemplate"
+        >
+          <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
+          <kendo-grid-column
+            :field="'number'"
+            :title="'CÓDIGO'"
+            :width="120"
+            :template="templateNumber"
+            :filterable-cell-operator="'contains'"
+            :filterable-cell-suggestion-operator="'contains'"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'opening_date'"
+            :title="'APERTURA'"
+            :width="120"
+            :format="'{0:dd/MM/yyyy}'"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'quotation'"
+            :title="'COTIZACIÓN'"
+            :width="100"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'state'"
+            :title="'ESTADO'"
+            :width="150"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'tasks'"
+            :title="'TAREAS'"
+            :width="50"
+            :filterable="false"
+          ></kendo-grid-column>
+        </kendo-grid>
       </div>
     </div>
   </div>
@@ -140,7 +141,7 @@ export default {
   },
 
   mounted() {
-    let grid = this.$refs.grid.kendoWidget()
+    let grid = this.$refs.gridWorkOrder.kendoWidget()
     let ds = []
     for (let i = 1, max = grid.columns.length; i < max; i++) {
       ds.push({
@@ -189,11 +190,15 @@ export default {
   },
 
   methods: {
+    reloadTable() {
+      this.$refs.gridWorkOrder.kendoWidget().dataSource.filter({})
+    },
+
     itemTemplate: function(e) {
       return {
         template: Vue.component(Template.name, Template),
         templateArgs: Object.assign({}, e, {
-            parentComponent: this.$refs.gridReceivable
+            parentComponent: this.$refs.gridWorkOrder
         })
       }
     },
@@ -205,7 +210,7 @@ export default {
       //   "</span>"
       // )
       return (
-        "<a href='/servicios/cotizaciones/" + dataItem.id +"?tab=2' class='btn btn-link'>" +
+        "<a href='/servicios/cotizaciones/" + dataItem.quotation_id +"?tab=2' class='btn btn-link'>" +
         kendo.htmlEncode(dataItem.number) +
         "</a>"
       )
@@ -256,7 +261,7 @@ export default {
     emptyGridSelected() {
       this.$store.dispatch("emptyWorkOrder")
       .then(() => {
-        let grid = this.$refs.grid.kendoWidget()
+        let grid = this.$refs.gridWorkOrder.kendoWidget()
         grid.clearSelection()
       })
     },

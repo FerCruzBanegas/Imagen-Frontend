@@ -81,85 +81,85 @@
         </div>
       </a-spin>
     </modal-form>
-    <div class="row justify-content-center">
+    <div class="row">
       <div class="table-responsive">
-        <div class="container">
-          <div class="row p-2 bg-secondary">
-            <div class="col-md-6">
-              <b-button @click="visibleModal = true" v-if="itemsMachine.length > 0" squared variant="outline-danger" class="mr-2">
-                <i class="fa fa-check-square"></i>
-                ({{ itemsMachine.length }}) Seleccionados
-              </b-button>
-              <b-button @click="visibleForm = true" variant="warning" class="mr-2">
-                <i class="fa fa-plus-circle"></i> Nuevo Registro
-              </b-button>
-              <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
-                <i class="fa fa-check-square-o"></i>
-              </b-button>
-            </div>
-            <div class="col-md-2 ml-auto">
-              <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
-              </div>
-            </div>
+        <div class="d-flex flex-sm-row flex-column bg-secondary">
+          <div class="mr-auto p-2">
+            <b-button @click="visibleModal = true" v-if="itemsMachine.length > 0" squared variant="outline-danger" class="mr-2">
+              <i class="fa fa-check-square"></i>
+              ({{ itemsMachine.length }}) Seleccionados
+            </b-button>
+            <b-button @click="visibleForm = true" variant="warning" class="mr-2">
+              <i class="fa fa-plus-circle"></i> Nuevo Registro
+            </b-button>
+            <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
+              <i class="fa fa-check-square-o"></i>
+            </b-button>
           </div>
-          <kendo-datasource
-            ref="machines"
-            :schema-total="'meta.total'"
-            :schema-data="'data'"
-            :transport-read="{ url: `${url}/machines`, beforeSend: readData }"
-            :transport-parameter-map="parameterMap"
-            :page-size="10"
-            :server-paging="true"
-            :server-filtering="true"
-            :server-sorting="true"
-            :schema-model-fields="dsSchemaFields"
-          ></kendo-datasource>
-          <kendo-grid
-            ref="grid_machine"
-            :data-source-ref="'machines'"
-            :no-records="true"
-            :messages-no-records="'NO EXISTEN RESULTADOS'"
-            :groupable="true"
-            :filterable="filterableConfig"
-            :navigatable="true"
-            :pageable-always-visible="true"
-            :pageable-page-sizes="[10, 20, 50, 100]"
-            :pageable-button-count="3"
-            :pageable-responsive="true"
-            :pageable-refresh="true"
-            :sortable="true"
-            :scrollable="true"
-            @change="onChange"
-            @databound="dataBound"
-          >
-            <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
-            <kendo-grid-column
-              :field="'description'"
-              :title="'DESCRIPCIÓN'"
-              :width="120"
-              :filterable-cell-operator="'contains'"
-              :filterable-cell-suggestion-operator="'contains'"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'created'"
-              :title="'REGISTRADO'"
-              :width="120"
-              :format="'{0:dd/MM/yyyy}'"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'updated'"
-              :title="'ACTUALIZADO'"
-              :width="120"
-              :format="'{0:dd/MM/yyyy}'"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :command="[{name: ' ', iconClass: 'fa fa-pencil', click: update}]" 
-              :width="45"
-            ></kendo-grid-column>
-          </kendo-grid>
+          <div class="p-2">
+            <b-button title="Actualizar Tabla" @click="reloadTable" variant="dark" class="mr-2">
+              <i class="fa fa-repeat"></i> Recargar
+            </b-button>
+            <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
+          </div>
         </div>
+        <kendo-datasource
+          ref="data-machine"
+          :schema-total="'meta.total'"
+          :schema-data="'data'"
+          :transport-read="{ url: `${url}/machines`, beforeSend: readData }"
+          :transport-parameter-map="parameterMap"
+          :page-size="10"
+          :server-paging="true"
+          :server-filtering="true"
+          :server-sorting="true"
+          :schema-model-fields="dsSchemaFields"
+        ></kendo-datasource>
+        <kendo-grid
+          ref="gridMachine"
+          :data-source-ref="'data-machine'"
+          :no-records="true"
+          :messages-no-records="'NO EXISTEN RESULTADOS'"
+          :groupable="true"
+          :filterable="filterableConfig"
+          :navigatable="true"
+          :pageable-always-visible="true"
+          :pageable-page-sizes="[10, 20, 50, 100]"
+          :pageable-button-count="3"
+          :pageable-responsive="true"
+          :pageable-refresh="true"
+          :sortable="true"
+          :scrollable="true"
+          @change="onChange"
+          @databound="dataBound"
+        >
+          <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
+          <kendo-grid-column
+            :field="'description'"
+            :title="'DESCRIPCIÓN'"
+            :width="120"
+            :filterable-cell-operator="'contains'"
+            :filterable-cell-suggestion-operator="'contains'"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'created'"
+            :title="'REGISTRADO'"
+            :width="120"
+            :format="'{0:dd/MM/yyyy}'"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'updated'"
+            :title="'ACTUALIZADO'"
+            :width="120"
+            :format="'{0:dd/MM/yyyy}'"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :command="[{name: ' ', iconClass: 'fa fa-pencil', click: update}]" 
+            :width="45"
+          ></kendo-grid-column>
+        </kendo-grid>
       </div>
     </div>
   </div>
@@ -228,7 +228,7 @@ export default {
   mixins: [permission],
 
   mounted() {
-    let grid = this.$refs.grid_machine.kendoWidget()
+    let grid = this.$refs.gridMachine.kendoWidget()
     let ds = []
     for (let i = 1, max = grid.columns.length; i < max; i++) {
       if (grid.columns[i].field) {
@@ -279,6 +279,10 @@ export default {
   },
 
   methods: {
+    reloadTable() {
+      this.$refs.gridMachine.kendoWidget().dataSource.filter({})
+    },
+
     closeModalForm() {
       this.visibleForm = false
       this.machine = new Machine()
@@ -286,7 +290,7 @@ export default {
 
     update(ev) {
       ev.preventDefault()
-      let gridWidget = this.$refs.grid_machine.kendoWidget()
+      let gridWidget = this.$refs.gridMachine.kendoWidget()
       let tr = $(ev.target).closest('tr')
       let data = gridWidget.dataItem(tr)
       let {created, updated, parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = data
@@ -299,7 +303,7 @@ export default {
       const response = await MachineService.deleteMachine(data)
       if (response.status === 200) {
         this.$store.dispatch("emptyMachine")
-        this.$refs.grid_machine.kendoWidget().dataSource.read()
+        this.$refs.gridMachine.kendoWidget().dataSource.read()
         this.visibleModal = false
         this.$bus.$emit('success')
         this.$message.success(response.data.message)
@@ -358,7 +362,7 @@ export default {
     emptyGridSelected() {
       this.$store.dispatch("emptyMachine")
       .then(() => {
-        let grid = this.$refs.grid_machine.kendoWidget()
+        let grid = this.$refs.gridMachine.kendoWidget()
         grid.clearSelection()
       })
     },
@@ -407,7 +411,7 @@ export default {
           this._save = await MachineService.storeMachine(this.machine)
         }
         if (this._save.status === 201 || this._save.status === 200) {
-          this.$refs.grid_machine.kendoWidget().dataSource.read()
+          this.$refs.gridMachine.kendoWidget().dataSource.read()
           this.$message.success(this._save.data.message)
           this.success = false
           this.closeModalForm()

@@ -19,15 +19,19 @@
                 </div>
               </div>
               <div class="row bg-light">
-                <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
-                  <div class="font-weight-bold pt-2 list">Nombre</div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
+                  <div class="font-weight-bold pt-2 list">Usuario</div>
                   <p>{{ user.name }}</p>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
+                  <div class="font-weight-bold pt-2 list">Nombre Completo</div>
+                  <p>{{ user.forename }} {{ user.surname }}</p>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
                   <div class="font-weight-bold pt-2 list">Correo</div>
                   <p>{{ user.email }}</p>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-3">
                   <div class="font-weight-bold pt-2 list">Teléfono</div>
                   <p v-if="user.phone">{{ user.phone }}</p>
                   <p v-else>S/D</p>
@@ -79,97 +83,95 @@
       @hide="questionModal = !questionModal"
       @submit="changeState"
     ></modal-question>
-    <div class="row justify-content-center">
+    <div class="row">
       <div class="table-responsive">
-        <div class="container">
-          <div class="row p-2 bg-secondary">
-            <div class="col-md-6">
-              <b-button @click="visibleModal = true" v-if="itemsUser.length > 0" squared variant="outline-danger" class="mr-2">
-                <i class="fa fa-check-square"></i>
-                ({{ itemsUser.length }}) Seleccionados
-              </b-button>
-              <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
-                <i class="fa fa-check-square-o"></i>
-              </b-button>
-            </div>
-            <div class="col-md-2 ml-auto">
-              <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
-              </div>
-            </div>
+        <div class="d-flex flex-sm-row flex-column bg-secondary">
+          <div class="mr-auto p-2">
+            <b-button @click="visibleModal = true" v-if="itemsUser.length > 0" squared variant="outline-danger" class="mr-2">
+              <i class="fa fa-check-square"></i>
+              ({{ itemsUser.length }}) Seleccionados
+            </b-button>
+            <b-button title="Quitar Seleccionados" @click="emptyGridSelected" variant="outline-dark">
+              <i class="fa fa-check-square-o"></i>
+            </b-button>
           </div>
-          <kendo-datasource
-            ref="datasource1"
-            :schema-total="'meta.total'"
-            :schema-data="'data'"
-            :transport-read="{ url: `${url}/users`, beforeSend: readData }"
-            :transport-parameter-map="parameterMap"
-            :page-size="10"
-            :server-paging="true"
-            :server-filtering="true"
-            :server-sorting="true"
-            :schema-model-fields="dsSchemaFields"
-          ></kendo-datasource>
-          <kendo-grid
-            ref="grid"
-            :data-source-ref="'datasource1'"
-            :no-records="true"
-            :messages-no-records="'NO EXISTEN RESULTADOS'"
-            :groupable="true"
-            :filterable="filterableConfig"
-            :navigatable="true"
-            :pageable-always-visible="true"
-            :pageable-page-sizes="[10, 20, 50, 100]"
-            :pageable-button-count="3"
-            :pageable-responsive="true"
-            :pageable-refresh="true"
-            :sortable="true"
-            @change="onChange"
-            @databound="dataBound"
-          >
-            <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
-            <kendo-grid-column
-              :field="'name'"
-              :title="'NOMBRE'"
-              :width="120"
-              :template="templateName"
-              :filterable-cell-operator="'contains'"
-              :filterable-cell-suggestion-operator="'contains'"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'email'"
-              :title="'CORREO'"
-              :width="120"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'state'"
-              :title="'ESTADO'"
-              :width="80"
-              :template="templateState"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'office'"
-              :title="'OFICINA'"
-              :width="160"
-              :sortable="false"
-              :filterable-cell-show-operators="false"
-              :filterable-cell-template="officeFilter"
-            ></kendo-grid-column>
-            <kendo-grid-column
-              :field="'created'"
-              :title="'REGISTRADO'"
-              :width="80"
-              :format="'{0:dd/MM/yyyy}'"
-              :filterable="false"
-            ></kendo-grid-column>
-            <kendo-grid-column 
-              v-if="permission('users.update')"
-              :command="[{name: ' ', iconClass: 'fa fa-pencil', click: update}]" 
-              :width="60"
-            ></kendo-grid-column>
-          </kendo-grid>
+          <div class="p-2">
+            <div class="menu" style="border-radius: 4px; float: right; background: #f6f6f6; padding: 0.2em;"/>
+          </div>
         </div>
+        <kendo-datasource
+          ref="data-user"
+          :schema-total="'meta.total'"
+          :schema-data="'data'"
+          :transport-read="{ url: `${url}/users`, beforeSend: readData }"
+          :transport-parameter-map="parameterMap"
+          :page-size="10"
+          :server-paging="true"
+          :server-filtering="true"
+          :server-sorting="true"
+          :schema-model-fields="dsSchemaFields"
+        ></kendo-datasource>
+        <kendo-grid
+          ref="gridUser"
+          :data-source-ref="'data-user'"
+          :no-records="true"
+          :messages-no-records="'NO EXISTEN RESULTADOS'"
+          :groupable="true"
+          :filterable="filterableConfig"
+          :navigatable="true"
+          :pageable-always-visible="true"
+          :pageable-page-sizes="[10, 20, 50, 100]"
+          :pageable-button-count="3"
+          :pageable-responsive="true"
+          :pageable-refresh="true"
+          :sortable="true"
+          :resizable="true"
+          @change="onChange"
+          @databound="dataBound"
+        >
+          <kendo-grid-column :selectable="true" :width="45"></kendo-grid-column>
+          <kendo-grid-column
+            :field="'name'"
+            :title="'NOMBRE'"
+            :width="120"
+            :template="templateName"
+            :filterable-cell-operator="'contains'"
+            :filterable-cell-suggestion-operator="'contains'"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'email'"
+            :title="'CORREO'"
+            :width="120"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'state'"
+            :title="'ESTADO'"
+            :width="80"
+            :template="templateState"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'office'"
+            :title="'OFICINA'"
+            :width="160"
+            :sortable="false"
+            :filterable-cell-show-operators="false"
+            :filterable-cell-template="officeFilter"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :field="'created'"
+            :title="'REGISTRADO'"
+            :width="80"
+            :format="'{0:dd/MM/yyyy}'"
+            :filterable="false"
+          ></kendo-grid-column>
+          <kendo-grid-column 
+            v-if="permission('users.update')"
+            :command="[{name: ' ', iconClass: 'fa fa-pencil', click: update}]" 
+            :width="60"
+          ></kendo-grid-column>
+        </kendo-grid>
       </div>
     </div>
   </div>
@@ -245,7 +247,7 @@ export default {
   mixins: [permission],
 
   mounted() {
-    let grid = this.$refs.grid.kendoWidget()
+    let grid = this.$refs.gridUser.kendoWidget()
     let ds = []
     for (let i = 1, max = grid.columns.length; i < max; i++) {
       if (grid.columns[i].field) {
@@ -298,7 +300,7 @@ export default {
   methods: {
     update(ev) {
       ev.preventDefault()
-      let gridWidget = this.$refs.grid.kendoWidget()
+      let gridWidget = this.$refs.gridUser.kendoWidget()
       let tr = $(ev.target).closest('tr')
       let data = gridWidget.dataItem(tr)
       this.$router.push({name: "EditUser", params: { id: data.id }})
@@ -309,7 +311,7 @@ export default {
       const response = await UserService.deleteUser(data)
       if (response.status === 200) {
         this.$store.dispatch("emptyUser")
-        this.$refs.grid.kendoWidget().dataSource.read()
+        this.$refs.gridUser.kendoWidget().dataSource.read()
         this.visibleModal = false
         this.$bus.$emit('success')
         this.$message.success(response.data.message)
@@ -327,7 +329,7 @@ export default {
       this.loadingAlert = true
       const response = await UserService.changeState(this.userId)
       if (response.status === 200) {
-        this.$refs.grid.kendoWidget().dataSource.read()
+        this.$refs.gridUser.kendoWidget().dataSource.read()
         this.loadingAlert = false
         this.questionModal = false
         this.$message.success(response.data.message)
@@ -435,7 +437,7 @@ export default {
     emptyGridSelected() {
       this.$store.dispatch("emptyUser")
       .then(() => {
-        let grid = this.$refs.grid.kendoWidget()
+        let grid = this.$refs.gridUser.kendoWidget()
         grid.clearSelection()
       })
     },
