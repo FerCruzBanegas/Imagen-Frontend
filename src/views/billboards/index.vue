@@ -4,7 +4,7 @@
       <template v-slot:header>
         <div>
           <span class="text-dark font-size-24 font-weight-bold">
-            LISTA DE EMPLEADOS
+            LISTA DE ESPACIOS
           </span>
           <router-link v-if="permission('employees.create')" :to="{path: '/configuracion/empleados/nuevo'}">
             <button
@@ -14,7 +14,7 @@
               <span class="btn-addon">
                 <i class="btn-addon-icon fe fe-plus-circle" />
               </span>
-              Registrar Nuevo
+              Registrar Nuevo 
             </button>
           </router-link>
         </div>   
@@ -31,7 +31,7 @@
 
 <script>
   import permission from '../../mixins/permission'
-  import GridGeneral from '../../components/employee/GridGeneral'
+  import GridGeneral from '../../components/billboard/GridGeneral'
 
   export default {
     components: {

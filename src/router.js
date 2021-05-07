@@ -228,6 +228,50 @@ const router = new Router({
       ],
     },
 
+    //Vallas
+    {
+      path: '/servicios/vallas',
+      component: AppLayout,
+      meta: { authRequired: true, hidden: true, breadcrumb: 'Vallas Publicitarias' },
+      children: [
+        {
+          path: '/',
+          name: 'ListBillboards',
+          meta: {
+            title: 'Clientes',
+          },
+          component: () => import('./views/billboards'),
+        },
+        // {
+        //   path: '/servicios/clientes/nuevo',
+        //   name: 'CreateCustomer',
+        //   meta: {
+        //     title: 'Clientes | Nuevo',
+        //     breadcrumb: 'Nuevo Registro'
+        //   },
+        //   component: () => import('./views/customers/form')
+        // },
+        // {
+        //   path: '/servicios/clientes/:id',
+        //   name: 'ShowCustomer',
+        //   meta: {
+        //     title: 'Clientes',
+        //     breadcrumb: 'Detalle Registro'
+        //   },
+        //   component: () => import('./views/customers/show'),
+        // },
+        // {
+        //   path: '/servicios/clientes/:id/edit',
+        //   name: 'EditCustomer',
+        //   meta: {
+        //     title: 'Clientes | Editar',
+        //     breadcrumb: 'Editar Registro'
+        //   },
+        //   component: () => import('./views/customers/form'),
+        // },
+      ],
+    },
+
     //Reportes
     {
       path: '/reportes',

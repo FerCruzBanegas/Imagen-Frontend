@@ -14,7 +14,7 @@
       </thead>
       <tbody>
         <template v-for="(item, index) in items" >
-          <tr :key="index" style="background-color: #f7d9d9;" >
+          <tr :key="'voucher'+item.id+index" style="background-color: #f7d9d9;" >
             <td>{{ item.date | formatDate('DD/MM/YYYY') }}</td>
             <td>{{ item.type }}</td>
             <td>{{ item.number }}</td>
@@ -23,7 +23,7 @@
             <td></td>
             <td>{{ item.total | currency }}</td>
           </tr>
-          <tr v-for="(payment, index) in item.payments" :key="item.id+index" style="background-color: #f9f3f3;">
+          <tr v-for="(payment, index) in item.payments" :key="'payment'+item.id+index" style="background-color: #f9f3f3;">
             <td>{{ payment.date | formatDate('DD/MM/YYYY') }}</td>
             <td>{{ payment.type }}</td>
             <td>{{ payment.code }}</td>

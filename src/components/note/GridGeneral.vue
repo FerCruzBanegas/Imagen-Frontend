@@ -11,6 +11,14 @@
     </modal-edit-note>
     <modal-note  v-if="checkNote" :note="checkNote" :visible="visibleNote" @hide="closeModalNote">
     </modal-note>
+    <modal-question
+      :title="'Alerta'"
+      :visible="visibleQuestion"
+      :alert_message="'Realmente desea eliminar esta nota?'"
+      :loading="loadingAlert"
+      @hide="visibleQuestion = !visibleQuestion"
+      @submit="deletedNote"
+    ></modal-question>
     <div class="row">
       <div class="table-responsive">
         <div class="d-flex flex-sm-row flex-column bg-secondary">
@@ -101,7 +109,11 @@
           ></kendo-grid-column>
           <kendo-grid-column
             :command="[{className: 'k-grid-edit', name: 'edit', text: '', iconClass: 'fa fa-edit', click: openModalEdit}]" 
-            :width="55"
+            :width="45"
+          ></kendo-grid-column>
+          <kendo-grid-column
+            :command="[{className: 'k-grid-deleted', name: 'deleted', text: '', iconClass: 'fa fa-trash', click: openModalDelete}]" 
+            :width="45"
           ></kendo-grid-column>
         </kendo-grid>
       </div>
@@ -118,6 +130,7 @@ import NoteService from "../../services/note.service"
 import ModalGrid from "../widgets/Modals/ModalGridInvoice.vue"
 import ModalNote from "../widgets/Modals/ModalNote.vue"
 import ModalEditNote from "../widgets/Modals/ModalEditNote.vue"
+import ModalQuestion from "../widgets/Modals/ModalQuestion.vue"
 
 export default {
   data() {
@@ -155,6 +168,8 @@ export default {
       checkNote: null,
       visibleEdit: false,
       editNote: null,
+      visibleQuestion: false,
+      loadingAlert: false,
     }
   },
 
@@ -166,6 +181,7 @@ export default {
     "modal-grid": ModalGrid,
     "modal-note": ModalNote,
     "modal-edit-note": ModalEditNote,
+    "modal-question": ModalQuestion,
   },
 
   mixins: [permission],
@@ -257,6 +273,40 @@ export default {
     closeModalEditNote() {
       this.$refs.gridNote.kendoWidget().dataSource.read()
       this.visibleEdit = false
+    },
+
+    openModalDelete(ev) {
+      ev.preventDefault()
+      // this.visibleQuestion = true
+    },
+
+    async deletedNote() {
+      try {
+        this.loadingAlert = true
+        const response = await NoteService.deletedNote(this.noteId)
+        if (response.status === 200) {
+          // if(response.data.success == undefined) {
+            this.$refs.gridNote.kendoWidget().dataSource.read()
+            this.loadingAlert = false
+            this.visibleQuestion = false
+            this.$message.success(response.data.message)
+          // } else {
+          //   throw new Error(response.data.message)
+          // }
+          // console.log(response)
+        }
+      } catch (err) {
+        if (err.response.status === 406) {
+          this.$notification.warning({
+            message: 'Alerta',
+            description: err.response.data,
+            duration: 10,
+            placement: 'bottomRight'
+          })
+        }
+        this.visibleQuestion = false
+        this.loadingAlert = false
+      }
     },
 
     templateNumber(dataItem) {
@@ -416,6 +466,13 @@ export default {
         let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
         vm.$bus.$emit('setObjNote', obj)
         vm.visibleEdit = true
+      })
+
+      grid.element.on("click", "tbody tr[data-uid] td:nth-child(8)", function(e) {
+        let element = e.target || e.srcElement
+        let {parent, dirty, dirtyFields, _events, _handlers, uid,...obj} = grid.dataItem($(element).closest("tr"))
+        vm.noteId = obj.id
+        vm.visibleQuestion = true
       })
     },
 

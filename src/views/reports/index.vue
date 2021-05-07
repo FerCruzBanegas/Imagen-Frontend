@@ -44,26 +44,32 @@
               ></v-select>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
-              <v-select
-                label="business_name"
-                :filterable="false"
-                :options="customers"
-                v-model="customer"
-                @search="onSearchCustomer"
-                placeholder="Cliente.."
-              >
-                <template slot="no-options">Buscar Cliente</template>
-                <template slot="option" slot-scope="customer">
-                  <div>
-                    <strong>{{ customer.business_name }}</strong>
-                  </div>
-                </template>
-                <template slot="selected-option" slot-scope="customer">
-                  <div>
-                    <strong>{{ customer.business_name }}</strong>
-                  </div>
-                </template>
-              </v-select>
+              <b-form-group label-for="customer" :invalid-feedback="errors.first('customer')" :state="!errors.has('customer')">
+                <v-select
+                  label="business_name"
+                  :filterable="false"
+                  :options="customers"
+                  v-model="customer"
+                  @search="onSearchCustomer"
+                  :state="errors.has('customer') ? false : null"
+                  v-validate="'required'"
+                  data-vv-name="customer"
+                  data-vv-as="cliente"
+                  placeholder="Cliente.."
+                >
+                  <template slot="no-options">Buscar Cliente</template>
+                  <template slot="option" slot-scope="customer">
+                    <div>
+                      <strong>{{ customer.business_name }}</strong>
+                    </div>
+                  </template>
+                  <template slot="selected-option" slot-scope="customer">
+                    <div>
+                      <strong>{{ customer.business_name }}</strong>
+                    </div>
+                  </template>
+                </v-select>
+              </b-form-group>
             </div>
           </div>
           <div class="row">
@@ -93,20 +99,34 @@
           <div v-if="report.type == 1">
             <b-table class="text-center" thead-class="bg-danger text-white" small fixed striped hover responsive="sm" stacked="sm" show-empty :items="items">
             </b-table>
-            <div class="container text-center">
+            <!-- <div class="container text-center">
               <div class="row border border-dark">
                 <div class="col-md-2 ml-auto border">
                   <div class="h5 font-weight-bold pt-2">TOTAL (BS)&nbsp:</div>
                 </div>
-                <div class="col-md-2 border" style="background: #4e4e4e;">
+                <div class="col-md-1 border" style="background: #4e4e4e;">
                   <div class="text-white h6 font-weight-bold pt-2">{{ subTotal | currency }}</div>
                 </div>
-                <div v-if="report.value === 'reports/total_quotations'" class="col-md-2 border" style="background: #4e4e4e;">
+                <div v-if="report.value === 'reports/total_quotations'" class="col-md-1 border" style="background: #4e4e4e;">
                   <div class="text-white h6 font-weight-bold pt-2">{{ subTotalCancelado | currency }}</div>
                 </div>
-                <div v-if="report.value === 'reports/total_quotations'" class="col-md-2 border" style="background: #4e4e4e;">
+                <div v-if="report.value === 'reports/total_quotations'" class="col-md-1 border" style="background: #4e4e4e;">
                   <div class="text-white h6 font-weight-bold pt-2">{{ subTotalSaldo | currency }}</div>
                 </div>
+              </div>
+            </div> -->
+            <div class="d-flex flex-column flex-row-reverse border border-dark px-4 bg-light">
+              <div class="p-2 font-weight-bold">
+                {{ subTotal | currency }}
+              </div>
+              <div v-if="report.value === 'reports/total_quotations'" class="p-2 font-weight-bold">
+                {{ subTotalCancelado | currency }}
+              </div>
+              <div v-if="report.value === 'reports/total_quotations'" class="p-2 font-weight-bold">
+                {{ subTotalSaldo | currency }}
+              </div>
+              <div class="p-2 border font-weight-bold">
+                TOTAL (BS):
               </div>
             </div>
           </div>
@@ -146,7 +166,7 @@
         reports: [
           { label: 'Total Importe Cotizaciones', value: 'reports/total_quotations', type: 1 },
           { label: 'Reporte de Facturación', value: 'reports/invoice_report', type: 1 },
-          { label: 'Estado de Cuentas (Clientes)', value: 'reports/get_accounts', type: 2},
+          { label: 'Estado de Cuentas (Cliente)', value: 'reports/get_accounts', type: 2},
           { label: 'Lista Cotizaciones Emitidas (General)', value: 'reports/quotation_general', type: 1 },
           { label: 'Lista Cotizaciones Emitidas (Pendientes)', value: 'reports/quotation_pending', type: 1 },
           { label: 'Lista Cotizaciones Emitidas (Aprobadas)', value: 'reports/quotation_approved', type: 1 },
@@ -262,6 +282,11 @@
       },
 
       getReport: async function(quotation) {
+        // this.$validator.validate().then(isTrue => {
+        //   if (isTrue) {
+            
+        //   }
+        // })
         this.loading = true
         try {
           let config = {
@@ -307,7 +332,8 @@
           const data = { 
             title: this.reports.filter(obj => obj.value === this.report.value)[0].label, 
             ... this.office && { office: this.offices.filter(obj => obj.id === this.office)[0].description }, 
-            ... this.customer && { customer: this.customer.business_name },
+            // ... this.customer && { customer: this.customer.business_name },
+            customer: this.customer,
             ... this.report.type === 1 && { columns: Object.keys(items[0]) },
             date: { initial_date: moment(this.date[0]).format('YYYY-MM-DD'), final_date: moment(this.date[1]).format('YYYY-MM-DD') },
             type: this.report.type,
@@ -349,6 +375,10 @@
 </script>
 <style scoped src="../../assets/css/date.css"></style>
 <style scoped>
+>>> .b-table {
+  font-size: 12px;
+}
+
 fieldset {
   background-color: #f6f6f6;
   border-radius: 4px;

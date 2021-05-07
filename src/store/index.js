@@ -17,6 +17,8 @@ import profile from './profile'
 import loader from './loader'
 import settings from './settings'
 import message from './message'
+//nuevos modulos
+import billboard from "./billboard"
 import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
@@ -39,7 +41,8 @@ export default new Vuex.Store({
     loader,
     user,
     settings,
-    message
+    message,
+    billboard,
   },
   plugins: [createPersistedState()]
 })

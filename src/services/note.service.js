@@ -58,6 +58,15 @@ const NoteService = {
     }
   },
 
+  deletedNote: async function(id) {
+    try {
+      const response = await ApiService.delete(`notes/${id}`)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   downloadNote: async function(id, type) {
     try {
       const options = {

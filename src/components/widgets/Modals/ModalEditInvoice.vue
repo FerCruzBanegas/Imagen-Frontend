@@ -87,7 +87,7 @@
                         ></b-form-input>
                         <b-input-group-append>
                           <b-input-group-text>
-                            <i @click=test class="close-icon fa fa-times-circle-o"></i>
+                            <i @click=cleanNitName class="close-icon fa fa-times-circle-o"></i>
                           </b-input-group-text>
                         </b-input-group-append>
                       </b-input-group>
@@ -316,7 +316,7 @@ export default {
   },
 
   methods: {
-    test() {
+    cleanNitName() {
       this.invoice.nit_name = ''
     },
 

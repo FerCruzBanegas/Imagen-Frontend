@@ -49,6 +49,15 @@ const InvoiceService = {
     }
   },
 
+  cancelInvoice: async function(id) {
+    try {
+      const response = await ApiService.put(`invoices/canceled/${id}`)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   downloadInvoice: async function(id, type) {
     try {
       const options = {
@@ -60,15 +69,6 @@ const InvoiceService = {
         }
       }
       const response = await ApiService.customRequest(options)
-      return response
-    } catch (error) {
-      throw error
-    }
-  },
-
-  cancelInvoice: async function(id) {
-    try {
-      const response = await ApiService.put(`invoices/canceled/${id}`)
       return response
     } catch (error) {
       throw error

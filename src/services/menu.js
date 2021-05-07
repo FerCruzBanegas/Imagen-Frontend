@@ -109,6 +109,38 @@ export const getMenuData = [
     ],
   },
   {
+    title: 'Vallas Pub.',
+    key: 'vallas',
+    icon: 'fa fa-television',
+    url: '/servicios/vallas',
+    children: [
+      {
+        title: 'indicadores',
+        key: 'indicadores',
+        url: '/servicios/vallas/indicadores',
+        permission: 'customers.index'
+      },
+      {
+        title: 'espacios',
+        key: 'vallas',
+        url: '/servicios/vallas',
+        permission: 'customers.index'
+      },
+      {
+        title: 'alquileres',
+        key: 'alquileres',
+        url: '/servicios/vallas/alquileres',
+        permission: 'customers.index'
+      },
+      {
+        title: 'informes',
+        key: 'informes',
+        url: '/servicios/vallas/informes',
+        permission: 'customers.index'
+      },
+    ],
+  },
+  {
     category: true,
     title: 'Administración',
   },
