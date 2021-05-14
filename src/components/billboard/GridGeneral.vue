@@ -14,33 +14,36 @@
         <fieldset class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
           <legend>Presentaciones:</legend>
           <div class="row p-2">
-            <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
-              <v-select 
-                placeholder="Para Clientes.."
-                v-model="type"
-                :reduce="type => type.label"
-                :options="types"
-              >
-                <template slot="option" slot-scope="option">
-                  <div class="d-center">
-                    {{ option.label }}
-                  </div>
-                </template>
-              </v-select>
+            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+              <b-form-group>
+                <b-form-radio-group
+                  id="btn-radios-2"
+                  v-model="selected"
+                  :options="options"
+                  button-variant="outline-danger"
+                  size="sm"
+                  name="radio-btn-outline"
+                  buttons
+                ></b-form-radio-group>
+              </b-form-group>
             </div>
-            <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
               <v-select 
-                placeholder="Para Usuarios.."
+                label="name"
+                placeholder="Ciudad.."
+                v-model="city"
+                :reduce="city => city.id"
+                :options="cities"
+              ></v-select>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+              <v-select 
+                label="description"
+                placeholder="Categoría"
                 v-model="type"
-                :reduce="type => type.label"
+                :reduce="type => type.id"
                 :options="types"
-              >
-                <template slot="option" slot-scope="option">
-                  <div class="d-center">
-                    {{ option.label }}
-                  </div>
-                </template>
-              </v-select>
+              ></v-select>
             </div>
             <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
               <b-button block title="Descargar Presentación" class="download">
@@ -113,6 +116,7 @@
             :field="'code'"
             :title="'CÓDIGO'"
             :width="80"
+            :template="templateCode"
             :filterable-cell-operator="'contains'"
             :filterable-cell-suggestion-operator="'contains'"
           ></kendo-grid-column>
@@ -164,6 +168,7 @@ import permission from '../../mixins/permission'
 import { mapGetters } from "vuex"
 import { API_URL } from "../../services/config"
 import BillboardService from "../../services/billboard.service"
+import CityService from '../../services/city.service'
 import ModalDetail from "../widgets/Modals/ModalDetail.vue"
 import ModalGrid from "../widgets/Modals/ModalGridSelected.vue"
 
@@ -197,11 +202,19 @@ export default {
       },
       visibleModal: false,
       visibleDetail: false,
+      selected: 'customers',
+      options: [
+        { text: 'Para Clientes', value: 'customers' },
+        { text: 'Para Usuarios', value: 'users' },
+      ],
+      city: null,
+      cities: [],
       type: null,
       types: [
-        {label:'CI', description: 'Carnet Identidad'}, 
-        {label:'LC', description: 'Licencia Conducir'}, 
-        {label:'LM', description: 'Libreta Militar'}
+        {id:1, description: 'Todos los Espacios'}, 
+        {id:2, description: 'Ocupados'}, 
+        {id:3, description: 'Disponibles'},
+        {id:4, description: 'No Disponibles'}
       ],
     }
   },
@@ -216,6 +229,10 @@ export default {
   },
 
   mixins: [permission],
+
+  created() {
+    this.listCities()
+  },
 
   mounted() {
     let grid = this.$refs.gridBillboard.kendoWidget()
@@ -269,6 +286,13 @@ export default {
   },
 
   methods: {
+    listCities: async function() {
+      const cities = await CityService.listCities()
+      if (cities.status === 200) {
+        this.cities = cities.data
+      }
+    },
+
     reloadTable() {
       this.$refs.gridBillboard.kendoWidget().dataSource.filter({})
     },
@@ -298,6 +322,14 @@ export default {
           })
         }
       }
+    },
+
+    templateCode(dataItem) {
+      return (
+        "<a href='/servicios/vallas/" + dataItem.id +"' class='btn btn-link'>" +
+        kendo.htmlEncode(dataItem.code) +
+        "</a>"
+      )
     },
 
     templateState(dataItem) {
@@ -381,9 +413,17 @@ export default {
     cityFilter(element) {
       let dataSource = new kendo.data.DataSource({
         transport: {
-          read: {
-            url: `${API_URL}/cities/listing`,
-            dataType: "json"
+          read: function(options) {
+            $.ajax({
+              url: `${API_URL}/cities/listing`,
+              dataType: "json",
+              success: function(result) {
+                options.success(result)
+              },
+              error: function(result) {
+                options.error(result)
+              }
+            })
           }
         }
       })
