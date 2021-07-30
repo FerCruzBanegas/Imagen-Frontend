@@ -16,6 +16,21 @@ const WorkOrderService = {
     }
   },
 
+  pdfListPendingWorkOrder: async function(data) {
+    try {
+      const options = {
+        method: 'post',
+        url: '/workorders/list-pending-pdf',
+        data: data,
+        responseType: 'arraybuffer'
+      }
+      const response = await ApiService.customRequest(options)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   excelListWorkOrder: async function(data) {
     try {
       const options = {
@@ -25,6 +40,30 @@ const WorkOrderService = {
         responseType: 'arraybuffer'
       }
       const response = await ApiService.customRequest(options)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  excelListPendingWorkOrder: async function(data) {
+    try {
+      const options = {
+        method: 'post',
+        url: '/workorders/list-pending-excel',
+        data: data,
+        responseType: 'arraybuffer'
+      }
+      const response = await ApiService.customRequest(options)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  showWorkOrder: async function(url) {
+    try {
+      const response = await ApiService.get(url)
       return response
     } catch (error) {
       throw error

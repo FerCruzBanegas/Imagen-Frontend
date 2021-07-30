@@ -42,14 +42,15 @@
             </div>
             </div>
             <div style="width: 500px; margin: 50px auto; margin-bottom: 0; text-align: center;">
-            <span style="font-size: 45px; font-weight: bold;">NOTA DE REMISION</span>
+              <span style="font-size: 45px; font-weight: bold;">NOTA DE REMISION</span>
             </div>
-            <div id="light-table" style="margin-top: 20px; color: #000000;">
-            <div style="border: 2px solid #9e0207; border-radius: 7px;">
+            <div v-if="!note.accounts" class="text-dark"><b>(NO CONTABILIZADO)</b></div>
+            <div id="light-table" style="color: #000000;">
+              <div style="border: 2px solid #9e0207; border-radius: 7px;">
                 <div style="float: right; margin: 15px;"><b>NIT/CI: {{ note.customer_data.nit }}</b></div>
                 <div style="margin: 15px;">{{ note.voucher.office.name }}, {{ note.date | formatDate('DD MMMM YYYY') }}</div>
                 <div style="margin: 15px;">Señor(es): {{ note.customer_data.business_name }}</div>
-            </div>
+              </div>
             </div>
             <div id="light-table" style="margin-top: 5px;">
               <table id="invoice-table">

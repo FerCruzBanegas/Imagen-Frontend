@@ -13,13 +13,14 @@
       <div class="table-responsive">
         <fieldset class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
           <legend>Presentaciones:</legend>
+          <!-- <pre>{{ $data }}</pre> -->
           <div class="row p-2">
             <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
               <b-form-group>
                 <b-form-radio-group
-                  id="btn-radios-2"
-                  v-model="selected"
-                  :options="options"
+                  id="btn-radios-category"
+                  v-model="category"
+                  :options="categories"
                   button-variant="outline-danger"
                   size="sm"
                   name="radio-btn-outline"
@@ -28,25 +29,37 @@
               </b-form-group>
             </div>
             <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
-              <v-select 
-                label="name"
-                placeholder="Ciudad.."
-                v-model="city"
-                :reduce="city => city.id"
-                :options="cities"
-              ></v-select>
+              <b-form-group label-for="city" :invalid-feedback="errors.first('city')" :state="!errors.has('city')">
+                <v-select 
+                  label="name"
+                  placeholder="Ciudad.."
+                  v-model="city"
+                  :reduce="city => city.id"
+                  :state="errors.has('city') ? false : null"
+                  v-validate="'required'"
+                  data-vv-name="city"
+                  data-vv-as="ciudad"
+                  :options="cities"
+                ></v-select>
+              </b-form-group>
             </div>
             <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
-              <v-select 
-                label="description"
-                placeholder="Categoría"
-                v-model="type"
-                :reduce="type => type.id"
-                :options="types"
-              ></v-select>
+              <b-form-group label-for="type" :invalid-feedback="errors.first('type')" :state="!errors.has('type')">
+                <v-select 
+                  label="description"
+                  placeholder="Categoría"
+                  v-model="type"
+                  :reduce="type => type.id"
+                  :state="errors.has('type') ? false : null"
+                  v-validate="'required'"
+                  data-vv-name="type"
+                  data-vv-as="tipo"
+                  :options="types"
+                ></v-select>
+              </b-form-group>
             </div>
             <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
-              <b-button block title="Descargar Presentación" class="download">
+              <b-button @click="pdfPresentationBillboard" block title="Descargar Presentación" class="download">
                 <i class="fa fa-download"></i> Descargar
               </b-button> 
             </div>
@@ -152,10 +165,10 @@
             :filterable-cell-template="typeFilter"
           ></kendo-grid-column>
           <!-- agregar permiso -->
-          <kendo-grid-column
+          <!-- <kendo-grid-column
             :command="[{className: 'k-grid-edit', name: 'edit', text: '', iconClass: 'fa fa-pencil', click: update}]" 
             :width="45"
-          ></kendo-grid-column>
+          ></kendo-grid-column> -->
         </kendo-grid>
       </div>
     </div>
@@ -202,8 +215,8 @@ export default {
       },
       visibleModal: false,
       visibleDetail: false,
-      selected: 'customers',
-      options: [
+      category: 'customers',
+      categories: [
         { text: 'Para Clientes', value: 'customers' },
         { text: 'Para Usuarios', value: 'users' },
       ],
@@ -211,7 +224,7 @@ export default {
       cities: [],
       type: null,
       types: [
-        {id:1, description: 'Todos los Espacios'}, 
+        {id:1, description: '(Todos los Espacios)'}, 
         {id:2, description: 'Ocupados'}, 
         {id:3, description: 'Disponibles'},
         {id:4, description: 'No Disponibles'}
@@ -290,6 +303,7 @@ export default {
       const cities = await CityService.listCities()
       if (cities.status === 200) {
         this.cities = cities.data
+        this.cities.unshift({id: 0, name: '(Nivel Nacional)'})
       }
     },
 
@@ -429,6 +443,7 @@ export default {
       })
 
       element.element.kendoDropDownList({
+        filter: "contains",
         dataSource: dataSource,
         dataTextField: "name",
         change: function(e) {},
@@ -525,6 +540,31 @@ export default {
         vm.employee = obj
         vm.work_orders = Array.from(obj.work_orders)
         vm.visibleDetail = true
+      })
+    },
+
+    async pdfPresentationBillboard() {
+      this.$validator.validate().then( async valid => {
+        if (valid) {
+          this.$store.dispatch("showLoader")
+          let data = {category: this.category, city: this.city, type: this.type}
+          let type = this.types.find(item => item.id === this.type)
+          let city = this.cities.find(item => item.id === this.city)
+          try {
+            const billboards = await BillboardService.pdfPresentationBillboard(data)
+            if (billboards.status === 200) {
+              let blob = new Blob([billboards.data])
+              let link = document.createElement("a")
+              link.href = window.URL.createObjectURL(blob)
+              link.download = `${type.description}-${city.name}.pdf`
+              link.click()
+              // console.log(billboards)
+              this.$store.dispatch("hideLoader")
+            }
+          } catch (err) {
+            this.$store.dispatch("hideLoader")
+          }
+        }
       })
     },
 

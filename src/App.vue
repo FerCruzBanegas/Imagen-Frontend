@@ -14,6 +14,9 @@ export default {
   computed: {
     ...mapGetters(['active'])
   },
+  mounted() {
+    this.$store.dispatch("hideLoader")
+  },
   components: {
     'feedback-message': FeedbackMessage,
   }

@@ -4,7 +4,7 @@
     <a-spin :spinning="loading">
       <div class="container">
         <div class="d-flex justify-content-between row bg-light p-2">
-          <button @click="test" type="button" class="btn btn-secondary btn-with-addon text-nowrap">
+          <button @click="submit" type="button" class="btn btn-secondary btn-with-addon text-nowrap">
             <span class="btn-addon">
               <i class="btn-addon-icon fe fe-check-circle"  />
             </span>
@@ -78,7 +78,7 @@
     },
 
     methods: {
-      async test() {
+      async submit() {
         this.loading = true
 
         let tasksItems = this.templateArgs.tasks_items.filter(item => {
@@ -93,7 +93,7 @@
           }
         } catch (err) {
           this.loading = false
-          console.log(err)
+          // console.log(err)
         }
       }
     }

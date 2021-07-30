@@ -1,6 +1,21 @@
 import ApiService from './api.service'
 
 const BillboardService = {
+  pdfPresentationBillboard: async function(data) {
+    try {
+      const options = {
+        method: 'post',
+        url: '/billboards/presentation-pdf',
+        data: data,
+        responseType: 'arraybuffer'
+      }
+      const response = await ApiService.customRequest(options)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   pdfListBillboard: async function(data) {
     try {
       const options = {
@@ -46,6 +61,45 @@ const BillboardService = {
     }
   },
 
+  pdfListRentals: async function(data) {
+    try {
+      const options = {
+        method: 'post',
+        url: '/billboards/rentals-pdf',
+        data: data,
+        responseType: 'arraybuffer'
+      }
+      const response = await ApiService.customRequest(options)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  excelListRental: async function(data) {
+    try {
+      const options = {
+        method: 'post',
+        url: '/billboards/rentals-excel',
+        data: data,
+        responseType: 'arraybuffer'
+      }
+      const response = await ApiService.customRequest(options)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  listBillboards: async function() {
+    try {
+      const response = await ApiService.get('/billboards/listing')
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   searchBillboards: async function(data) {
     try {
       const params = {
@@ -54,16 +108,52 @@ const BillboardService = {
       const response = await ApiService.getParams('/billboards/search', params)
       return response
     } catch (error) {
-      console.log(error)
+      throw error
     }
   },
 
-  showBillboards: async function(url) {
+  getLastBillboard: async function() {
+    try {
+      const response = await ApiService.get('/billboards/last-billboard')
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  getRecordBillboard: async function(url) {
     try {
       const response = await ApiService.get(url)
       return response
     } catch (error) {
-      console.log(error)
+      throw error
+    }
+  },
+
+  showBillboard: async function(url) {
+    try {
+      const response = await ApiService.get(url)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  saveCustomerImage: async function(id, data) {
+    try {
+      const response = await ApiService.post(`/billboards/save-customer-img/${id}`, data)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
+  saveUserImage: async function(id, data) {
+    try {
+      const response = await ApiService.post(`/billboards/save-user-img/${id}`, data)
+      return response
+    } catch (error) {
+      throw error
     }
   },
 
@@ -85,12 +175,12 @@ const BillboardService = {
     }
   },
 
-  deleteBillboard: async function(data) {
+  deleteBillboard: async function(id) {
     try {
-      const response = await ApiService.deleteParams('/billboards', {data: {billboards: data}})
+      const response = await ApiService.delete(`/billboards/${id}`)
       return response
     } catch (error) {
-      console.log(error)
+      throw error
     }
   },
 }

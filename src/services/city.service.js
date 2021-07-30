@@ -27,6 +27,15 @@ const CityService = {
       console.log(error)
     }
   },
+
+  storeCity: async function(data) {
+    try {
+      const response = await ApiService.post('/cities', data)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
 }
 
 export default CityService

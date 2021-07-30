@@ -89,6 +89,23 @@ const router = new Router({
       ],
     },
 
+    //Trabajos Pendientes
+    {
+      path: '/servicios/trabajos',
+      component: AppLayout,
+      meta: { authRequired: true, hidden: true, breadcrumb: 'Trabajos Pendientes' },
+      children: [
+        {
+          path: '/servicios/trabajos',
+          name: 'ListJobs',
+          meta: {
+            title: 'Trabajos',
+          },
+          component: () => import('./views/workorders/jobs'),
+        },
+      ],
+    },
+
     //Facturas
     {
       path: '/servicios/comprobantes/facturas',
@@ -238,37 +255,81 @@ const router = new Router({
           path: '/',
           name: 'ListBillboards',
           meta: {
-            title: 'Clientes',
+            title: 'Vallas',
           },
           component: () => import('./views/billboards'),
         },
-        // {
-        //   path: '/servicios/clientes/nuevo',
-        //   name: 'CreateCustomer',
-        //   meta: {
-        //     title: 'Clientes | Nuevo',
-        //     breadcrumb: 'Nuevo Registro'
-        //   },
-        //   component: () => import('./views/customers/form')
-        // },
-        // {
-        //   path: '/servicios/clientes/:id',
-        //   name: 'ShowCustomer',
-        //   meta: {
-        //     title: 'Clientes',
-        //     breadcrumb: 'Detalle Registro'
-        //   },
-        //   component: () => import('./views/customers/show'),
-        // },
-        // {
-        //   path: '/servicios/clientes/:id/edit',
-        //   name: 'EditCustomer',
-        //   meta: {
-        //     title: 'Clientes | Editar',
-        //     breadcrumb: 'Editar Registro'
-        //   },
-        //   component: () => import('./views/customers/form'),
-        // },
+        {
+          path: '/servicios/vallas/nuevo',
+          name: 'CreateBillboard',
+          meta: {
+            title: 'Vallas | Nuevo',
+            breadcrumb: 'Nuevo Registro'
+          },
+          component: () => import('./views/billboards/form')
+        },
+        {
+          path: '/servicios/vallas/:id',
+          name: 'ShowBillboard',
+          meta: {
+            title: 'Vallas',
+            breadcrumb: 'Detalle Registro'
+          },
+          component: () => import('./views/billboards/show'),
+        },
+        {
+          path: '/servicios/vallas/:id/edit',
+          name: 'EditBillboard',
+          meta: {
+            title: 'Vallas | Editar',
+            breadcrumb: 'Editar Registro'
+          },
+          component: () => import('./views/billboards/form'),
+        },
+      ],
+    },
+
+    //Vallas
+    {
+      path: '/servicios/alquileres',
+      component: AppLayout,
+      meta: { authRequired: true, hidden: true, breadcrumb: 'Alquileres' },
+      children: [
+        {
+          path: '/',
+          name: 'ListRentals',
+          meta: {
+            title: 'Alquileres',
+          },
+          component: () => import('./views/rentals'),
+        },
+        {
+          path: '/servicios/alquileres/nuevo',
+          name: 'CreateRental',
+          meta: {
+            title: 'Alquileres | Nuevo',
+            breadcrumb: 'Nuevo Registro'
+          },
+          component: () => import('./views/rentals/form')
+        },
+        {
+          path: '/servicios/alquileres/:id',
+          name: 'ShowRental',
+          meta: {
+            title: 'Alquileres',
+            breadcrumb: 'Detalle Registro'
+          },
+          component: () => import('./views/rentals/show'),
+        },
+        {
+          path: '/servicios/alquileres/:id/edit',
+          name: 'EditRental',
+          meta: {
+            title: 'Alquileres | Editar',
+            breadcrumb: 'Editar Registro'
+          },
+          component: () => import('./views/rentals/form'),
+        },
       ],
     },
 

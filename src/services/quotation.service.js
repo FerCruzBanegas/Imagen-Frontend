@@ -57,6 +57,20 @@ const QuotationService = {
     }
   },
 
+  downloadQuotationSummary: async function(id) {
+    try {
+      const options = {
+        method: 'get',
+        url: `download/quotation/${id}/summary`,
+        responseType: 'arraybuffer'
+      }
+      const response = await ApiService.customRequest(options)
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   showQuotation: async function(url) {
     try {
       const response = await ApiService.get(url)

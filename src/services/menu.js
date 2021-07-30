@@ -42,6 +42,13 @@ export const getMenuData = [
     permission: 'workorders.index'
   },
   {
+    title: 'Trabajos',
+    key: 'trabajos',
+    icon: 'fa fa-wrench',
+    url: '/servicios/trabajos',
+    permission: 'jobs.index'
+  },
+  {
     title: 'Comprobantes',
     key: 'comprobantes',
     icon: 'fa fa-dollar',
@@ -129,7 +136,7 @@ export const getMenuData = [
       {
         title: 'alquileres',
         key: 'alquileres',
-        url: '/servicios/vallas/alquileres',
+        url: '/servicios/alquileres',
         permission: 'customers.index'
       },
       {

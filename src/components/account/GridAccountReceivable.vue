@@ -406,10 +406,7 @@ import ModalGrid from "../widgets/Modals/ModalGridInvoice.vue"
 import ModalDetail from "../widgets/Modals/ModalAccount.vue"
 import ModalQuestion from "../widgets/Modals/ModalQuestion.vue"
 import Template from "./DetailTemplate.vue"
-// import {PDFJS} from "../../assets/js/pdf.js"
-import * as pdfjslib from "pdfjs-dist";
-const PDFJS = (pdfjslib)
-PDFJS.GlobalWorkerOptions.workerSrc = require("pdfjs-dist/build/pdf.worker.entry.js");
+
 export default {
   data() {
     return {

@@ -13,7 +13,7 @@
         <span v-if="quotation.condition === 2" class='ml-2 badge badge-custom-3'>REMITIDO <i class="fa fa-check-circle"></i></span>
       </div>
       <div>
-        <b-button :disabled="loadingPrint" @click="printDesign" size="sm" variant="info" class="mr-2">
+        <b-button :disabled="loadingPrint" @click="printQuotation" size="sm" variant="info" class="mr-2">
           <i v-if="!loadingPrint" class="fa fa-print"></i> 
           <b-spinner v-else small label="Small Spinner" type="grow"></b-spinner>
         </b-button>
@@ -70,7 +70,7 @@
               </div>
               <div class="row justify-content-between border bg-light">
                 <div class="col-md-6 border br-content">
-                  <span>Pesona de Contacto: </span>
+                  <span>Persona de Contacto: </span>
                   <span class="text-light"> {{ quotation.attends }}</span>
                 </div>
                 <div class="col-md-6 border br-content">
@@ -271,7 +271,7 @@ export default {
       }
     },
 
-    async printDesign(item) {
+    async printQuotation() {
       try {
         this.loadingPrint = true
         const response = await QuotationService.downloadQuotation(this.quotation.id)

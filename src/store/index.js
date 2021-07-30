@@ -19,6 +19,7 @@ import settings from './settings'
 import message from './message'
 //nuevos modulos
 import billboard from "./billboard"
+import rental from "./rental"
 import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
@@ -43,6 +44,7 @@ export default new Vuex.Store({
     settings,
     message,
     billboard,
+    rental
   },
   plugins: [createPersistedState()]
 })

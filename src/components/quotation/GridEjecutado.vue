@@ -586,6 +586,13 @@
                     </tr>
                   </table>
                 </div>
+                <div class="d-flex flex-sm-row flex-column bg-custom">
+                  <div class="pl-2 text-dark font-weight-bold">
+                    <label style="margin-bottom: 0;" for="set_accounts" class="p-2">Registrar en cuentas por cobrar?</label>
+                    <input v-model="note.accounts" type="checkbox" id="set_accounts" class="k-checkbox" checked="checked">
+                  </div>
+                </div>
+                <hr/>
                 <div class="row">
                   <div class="col-md-12">
                     <strong>
@@ -969,6 +976,12 @@ export default {
                 return prev
             }
         })
+
+        obj.customer_data.business_name = obj.customer.name
+        if(obj.customer_data.nit_name){
+          this.invoice.nit_name = obj.customer_data.nit_name
+          this.showNitName = true
+        }
         // console.log(obj)
         this.invoice.office_id = obj.license.office.id//fixme
         this.invoice.user_id = obj.user//fixme
@@ -1619,6 +1632,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.bg-custom {
+  background-color: #d8d8d8;
+}
+
 .btn-close {
   font-size: .650rem;
   line-height: 1.5;

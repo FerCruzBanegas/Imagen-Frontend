@@ -6,7 +6,7 @@
           <span class="text-dark font-size-24 font-weight-bold">
             LISTA DE ESPACIOS
           </span>
-          <router-link v-if="permission('employees.create')" :to="{path: '/configuracion/empleados/nuevo'}">
+          <router-link v-if="permission('employees.create')" :to="{path: '/servicios/vallas/nuevo'}">
             <button
               type="button"
               class="btn btn-danger btn-with-addon mr-auto text-nowrap pull-right"

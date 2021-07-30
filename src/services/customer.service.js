@@ -31,6 +31,15 @@ const CustomerService = {
     }
   },
 
+  listCustomers: async function() {
+    try {
+      const response = await ApiService.get('/customers/listing')
+      return response
+    } catch (error) {
+      throw error
+    }
+  },
+
   searchCustomer: async function(data) {
     try {
       const params = {
@@ -39,7 +48,7 @@ const CustomerService = {
       const response = await ApiService.getParams('/customers/search', params)
       return response
     } catch (error) {
-      console.log(error)
+      throw error
     }
   },
 
@@ -48,7 +57,7 @@ const CustomerService = {
       const response = await ApiService.get(url)
       return response
     } catch (error) {
-      console.log(error)
+      throw error
     }
   },
 
@@ -75,7 +84,7 @@ const CustomerService = {
       const response = await ApiService.deleteParams('/customers', {data: {customers: data}})
       return response
     } catch (error) {
-      console.log(error)
+      throw error
     }
   },
 }

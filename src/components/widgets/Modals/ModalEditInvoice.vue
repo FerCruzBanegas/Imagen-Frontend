@@ -95,8 +95,25 @@
                   </p>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                  <div class=" font-weight-bold pt-2 list">NIT:</div>
-                  <p>{{ invoice.customer_data.nit }}</p>
+                  <strong>
+                    <label for="invoice.nit">NIT / C.I. * :</label>
+                  </strong>
+                  <b-form-group :invalid-feedback="errors.first('invoice.nit')" :state="!errors.has('invoice.nit')">
+                    <b-input-group class="mb-2">
+                      <b-form-input
+                        :disabled="CheckNIT"
+                        v-model="invoice.nit"
+                        :state="errors.has('invoice.nit') ? false : null"
+                        v-validate="'required|min:3|max:16'"
+                        data-vv-name="invoice.nit"
+                        data-vv-as="nit/ci"
+                        type="text"
+                      ></b-form-input>
+                      <b-input-group-prepend is-text>
+                        <input v-b-tooltip.hover title="Click para editar NIT" v-model="CheckNIT" type="checkbox" class="k-checkbox" checked="checked">
+                      </b-input-group-prepend>
+                    </b-input-group>
+                  </b-form-group>
                 </div>
               </div>
             </div>          
@@ -287,6 +304,7 @@ export default {
       visibleInvoice: false,
       error: null,
       checkNitName: false,
+      CheckNIT: true,
     }
   },
  
@@ -386,6 +404,10 @@ export default {
         footer: this.invoice.footer,
         details: this.invoice.details.map(obj => obj.description).join('|'),
         summary: this.invoice.summary,
+        number: this.invoice.number,
+        license: this.invoice.license.id,
+        total: this.invoice.total,
+        nit: this.invoice.nit,
       }
 
       let products = this.invoice.products.map(item => {
@@ -415,6 +437,7 @@ export default {
     onClose() {
       this.error = null
       this.checkNitName = false
+      this.CheckNIT = true
       this.$emit("hide")
     }
   }

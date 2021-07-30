@@ -170,6 +170,13 @@
                   </tr>
                 </table>
               </div>
+              <div class="d-flex flex-sm-row flex-column bg-custom">
+                <div class="pl-2 text-dark font-weight-bold">
+                  <label style="margin-bottom: 0;" for="set_accounts" class="p-2">Registrar en cuentas por cobrar?</label>
+                  <input v-model="note.accounts" type="checkbox" id="set_accounts" class="k-checkbox" checked="checked">
+                </div>
+              </div>
+              <hr/>
               <div class="row">
                 <div class="col-md-12">
                   <strong>
@@ -425,6 +432,7 @@ export default {
         total: this.note.total,
         discount: this.note.discount,
         summary: this.note.summary,
+        accounts: this.note.accounts,
       }
 
       let products = this.products.map(item => {
@@ -472,6 +480,10 @@ export default {
 }
 </script>
 <style scoped>
+.bg-custom {
+  background-color: #d8d8d8;
+}
+
 .btn-close {
   font-size: .650rem;
   line-height: 1.5;

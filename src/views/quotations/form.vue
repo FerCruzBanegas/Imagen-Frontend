@@ -14,7 +14,7 @@
           v-model="office" 
           :options="offices"
           :clearable="false"
-          disabled
+          :disabled="!currentUser.acl[0] == '*'"
         ></v-select>
       </div>
     </div>

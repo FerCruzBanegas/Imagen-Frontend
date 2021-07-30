@@ -87,6 +87,7 @@ Vue.prototype.$setErrorsFromResponse = function(errorResponse) {
 };
 
 Vue.filter('formatDate', require('./filters/formatDate'));
+Vue.filter('dateDiff', require('./filters/dateDiff'));
 Vue.filter('dateSpanish', require('./filters/dateSpanish'));
 Vue.filter('currency', require('./filters/currency'));
 Vue.filter('codeString', require('./filters/codeString'));

@@ -92,7 +92,7 @@
             <b-button @click="downloadPdf" title="Descargar PDF" variant="danger" class="mr-2">
               <i class="fa fa-file-pdf-o"></i>
             </b-button>
-            <b-button @click="downloadExcel" title="Descargar EXCEL" variant="success" class="mr-2">
+            <b-button v-if="report.value != 'reports/get_accounts'" @click="downloadExcel" title="Descargar EXCEL" variant="success" class="mr-2">
               <i class="fa fa-file-excel-o"></i>
             </b-button>
           </div>
@@ -116,14 +116,14 @@
               </div>
             </div> -->
             <div class="d-flex flex-column flex-row-reverse border border-dark px-4 bg-light">
-              <div class="p-2 font-weight-bold">
-                {{ subTotal | currency }}
+              <div v-if="report.value === 'reports/total_quotations'" class="p-2 font-weight-bold">
+                {{ subTotalSaldo | currency }}
               </div>
               <div v-if="report.value === 'reports/total_quotations'" class="p-2 font-weight-bold">
                 {{ subTotalCancelado | currency }}
               </div>
-              <div v-if="report.value === 'reports/total_quotations'" class="p-2 font-weight-bold">
-                {{ subTotalSaldo | currency }}
+              <div class="p-2 font-weight-bold">
+                {{ subTotal | currency }}
               </div>
               <div class="p-2 border font-weight-bold">
                 TOTAL (BS):
